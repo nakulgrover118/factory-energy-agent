@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Plan and risks</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 1280px; height: 720px; box-sizing: border-box; padding: 56px 64px; background: #F6F7F8; color: #101820; font-family: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif; display: flex; flex-direction: column; gap: 24px">
+  <div style="display: flex; justify-content: space-between; align-items: center; font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; line-height: 16px; letter-spacing: 0.08em; text-transform: uppercase">
+    <span style="color: #0B6E6E">Plan and risks</span>
+    <span style="color: #4B5663">08 / 08</span>
+  </div>
+  <h1 style="margin: 0; max-width: 1152px; font-size: 36px; line-height: 44px; font-weight: 600; letter-spacing: -0.01em; text-wrap: balance">One day, four owners, and one end-to-end path before any polish</h1>
+  <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px">
+    <div style="background: #FFFFFF; border: 1px solid #D5DADF; border-radius: 10px; padding: 18px; box-sizing: border-box; display: flex; flex-direction: column; gap: 12px">
+      <span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; line-height: 16px; letter-spacing: 0.08em; text-transform: uppercase; color: #4B5663">Day plan, times indicative</span>
+      <div style="display: flex; gap: 12px">
+        <span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px; line-height: 20px; font-weight: 500; color: #0B6E6E; width: 44px; flex: none">10:30</span>
+        <span style="font-size: 14px; line-height: 20px">Sprint 1: data generator, validation, loader, one question end to end</span>
+      </div>
+      <div style="display: flex; gap: 12px">
+        <span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px; line-height: 20px; font-weight: 500; color: #0B6E6E; width: 44px; flex: none">11:30</span>
+        <span style="font-size: 14px; line-height: 20px">Mentor check-in: confirm emission factor and action-cost assumptions</span>
+      </div>
+      <div style="display: flex; gap: 12px">
+        <span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px; line-height: 20px; font-weight: 500; color: #B4440A; width: 44px; flex: none">13:45</span>
+        <span style="font-size: 14px; line-height: 20px">Late drop: corrected tariff and sub-meter fix; re-run and explain the change</span>
+      </div>
+      <div style="display: flex; gap: 12px">
+        <span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px; line-height: 20px; font-weight: 500; color: #0B6E6E; width: 44px; flex: none">14:00</span>
+        <span style="font-size: 14px; line-height: 20px">Sprint 2: waste detection, savings, brief, bridge chart</span>
+      </div>
+      <div style="display: flex; gap: 12px">
+        <span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px; line-height: 20px; font-weight: 500; color: #0B6E6E; width: 44px; flex: none">15:00</span>
+        <span style="font-size: 14px; line-height: 20px">Mentor check-in</span>
+      </div>
+      <div style="display: flex; gap: 12px">
+        <span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px; line-height: 20px; font-weight: 500; color: #0B6E6E; width: 44px; flex: none">16:15</span>
+        <span style="font-size: 14px; line-height: 20px">Code freeze: evaluation report, Docker, README, final tag</span>
+      </div>
+    </div>
+    <div style="background: #FFFFFF; border: 1px solid #D5DADF; border-radius: 10px; padding: 18px; box-sizing: border-box; display: flex; flex-direction: column; gap: 14px">
+      <span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; line-height: 16px; letter-spacing: 0.08em; text-transform: uppercase; color: #4B5663">Who builds what</span>
+      <div style="display: flex; flex-direction: column; gap: 2px">
+        <span style="font-size: 15px; line-height: 22px; font-weight: 600">Analytics core · [NAME]</span>
+        <span style="font-size: 14px; line-height: 20px">Baseline, decomposition, ranges, waste and leak detection</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 2px">
+        <span style="font-size: 15px; line-height: 22px; font-weight: 600">API and agent · [NAME]</span>
+        <span style="font-size: 14px; line-height: 20px">FastAPI contract, LangGraph, LLM layer, trace, guardrails</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 2px">
+        <span style="font-size: 15px; line-height: 22px; font-weight: 600">Data · [NAME]</span>
+        <span style="font-size: 14px; line-height: 20px">Generator with known split, cleaning, validation, loader, data card</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 2px">
+        <span style="font-size: 15px; line-height: 22px; font-weight: 600">Interface and evaluation · [NAME]</span>
+        <span style="font-size: 14px; line-height: 20px">Bridge chart, test harness, Docker, README, demo script</span>
+      </div>
+      <p style="margin: 0; font-size: 13px; line-height: 18px; color: #4B5663">Every member should be able to explain the whole pipeline, since judges question individuals.</p>
+    </div>
+    <div style="background: #FFFFFF; border: 1px solid #D5DADF; border-radius: 10px; padding: 18px; box-sizing: border-box; display: flex; flex-direction: column; gap: 14px">
+      <span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; line-height: 16px; letter-spacing: 0.08em; text-transform: uppercase; color: #4B5663">Risks we are watching</span>
+      <div style="display: flex; flex-direction: column; gap: 2px">
+        <span style="font-size: 15px; line-height: 22px; font-weight: 600">Hidden split uses other definitions</span>
+        <span style="font-size: 14px; line-height: 20px">State our definitions, report ranges, test on known-truth data</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 2px">
+        <span style="font-size: 15px; line-height: 22px; font-weight: 600">Baseline unstable on unseen data</span>
+        <span style="font-size: 14px; line-height: 20px">Few features, Ridge fallback, residual checks, a caveat on poor fit</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 2px">
+        <span style="font-size: 15px; line-height: 22px; font-weight: 600">Payback inputs not in the data pack</span>
+        <span style="font-size: 14px; line-height: 20px">A labelled assumptions table, with ranges</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 2px">
+        <span style="font-size: 15px; line-height: 22px; font-weight: 600">LLM provider fails or is slow</span>
+        <span style="font-size: 14px; line-height: 20px">MOCK_LLM mode, template brief, provider switch</span>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":720}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

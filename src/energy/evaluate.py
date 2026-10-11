@@ -1,0 +1,113 @@
+"""Run the analytics on every generated dataset and score it against the known truth.
+
+Usage: python -m energy.evaluate --data data --out eval
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import time
+from pathlib import Path
+
+import numpy as np
+
+from . import analytics as an
+from .pipeline import clean, load_dir, validate
+
+PERIOD, COMPARE_TO = "2026-Q3", "2026-Q2"
+
+
+def run(path: Path, model: str, late_drop: bool = False) -> dict:
+    t0 = time.perf_counter()
+    frames = load_dir(path, late_drop=late_drop)
+    checks = validate(frames)
+    meters, quality = clean(frames)
+    daily = an.daily_table(meters, frames, COMPARE_TO)
+    bridge = an.decompose(daily, PERIOD, COMPARE_TO, model=model)
+    leaks = an.detect_leaks(meters, frames, PERIOD, COMPARE_TO)
+    ef = (frames["_card"] or {}).get("emission_factor_kg_per_kwh", 0.4)
+    actions = an.estimate_savings(leaks, meters, frames, ef)
+    return {"checks": checks, "quality": quality, "bridge": bridge, "leaks": leaks, "actions": actions,
+            "assets": an.asset_breakdown(meters, PERIOD), "seconds": round(time.perf_counter() - t0, 2)}
+
+
+def score(result: dict, truth: dict) -> dict:
+    est = {b["cause"]: b for b in result["bridge"]["bridge"]}
+    true = truth["true_split_pp"]
+    err = {c: round(est[c]["pct_points"] - true[c], 2) for c in true}
+    in_range = {c: bool(est[c]["range"][0] - 0.005 <= true[c] <= est[c]["range"][1] + 0.005) for c in true}
+    planted = {w["asset"] for w in truth["planted_waste"]}
+    found = {l["asset"] for l in result["leaks"]}
+    out = {"total_true": truth["total_change_pct"], "total_est": result["bridge"]["total_change_pct"],
+           "error_pp": err, "mae_pp": round(float(np.mean(np.abs(list(err.values())))), 2),
+           "max_abs_error_pp": round(float(np.max(np.abs(list(err.values())))), 2),
+           "truth_in_range": in_range,
+           "reconciliation_gap_pp": round(abs(sum(b["pct_points"] for b in est.values()) - result["bridge"]["total_change_pct"]), 2),
+           "leak_recall": (len(planted & found) / len(planted)) if planted else None,
+           "false_leak_claims": sorted(found - planted),
+           "r2": result["bridge"]["baseline"]["r2"], "seconds": result["seconds"]}
+    if planted and result["actions"]:
+        a = result["actions"][0]
+        true_kwh = truth["planted_waste"][0]["saving_kwh_per_year"]
+        out["saving_true_kwh"] = true_kwh
+        out["saving_range_kwh"] = a["saving_kwh_per_year"]
+        out["saving_in_range"] = bool(a["saving_kwh_per_year"][0] <= true_kwh <= a["saving_kwh_per_year"][1])
+        out["leak_start_found"] = result["leaks"][0]["from"]
+        out["leak_start_true"] = truth["planted_waste"][0]["from"]
+    return out
+
+
+def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--data", default="data")
+    ap.add_argument("--out", default="eval")
+    args = ap.parse_args()
+    out = Path(args.out)
+    out.mkdir(parents=True, exist_ok=True)
+    datasets = sorted(p for p in Path(args.data).iterdir() if (p / "truth.json").exists())
+    results, lines = {}, []
+    for ds in datasets:
+        truth = json.loads((ds / "truth.json").read_text())
+        for model in ("ols", "ridge"):
+            for stage, late in (("as_loaded", False), ("after_late_drop", True)):
+                r = run(ds, model, late_drop=late)
+                s = score(r, truth[stage])
+                results[f"{ds.name}|{model}|{stage}"] = {"score": s, "bridge": r["bridge"], "leaks": r["leaks"],
+                                                           "actions": r["actions"], "quality": r["quality"],
+                                                           "checks": r["checks"]}
+                e = s["error_pp"]
+                lines.append(f"| {ds.name} | {model} | {stage} | {s['total_true']:.2f} | {s['total_est']:.2f} | "
+                             f"{e['tariff']:+.2f} | {e['volume']:+.2f} | {e['product_mix']:+.2f} | {e['weather']:+.2f} | "
+                             f"{e['waste']:+.2f} | {s['mae_pp']:.2f} | {sum(s['truth_in_range'].values())}/5 | "
+                             f"{'-' if s['leak_recall'] is None else s['leak_recall']} | {len(s['false_leak_claims'])} | "
+                             f"{s.get('saving_in_range', '-')} | {s['r2']:.3f} | {s['seconds']} |")
+    (out / "results.json").write_text(json.dumps(results, indent=2, default=str))
+
+    def agg(model: str, held_out_only: bool = False):
+        keys = [k for k in results if f"|{model}|" in k and not (held_out_only and k.startswith("seed_1|"))]
+        maes = [results[k]["score"]["mae_pp"] for k in keys]
+        mx = [results[k]["score"]["max_abs_error_pp"] for k in keys]
+        cover = [sum(results[k]["score"]["truth_in_range"].values()) for k in keys]
+        return round(float(np.mean(maes)), 3), round(float(np.max(mx)), 2), f"{sum(cover)}/{5 * len(keys)}"
+
+    report = ["# Evaluation report (deterministic analytics)", "",
+              "Generated by `python -m energy.evaluate`. Errors are estimate minus truth, in percentage points of the reference bill.",
+              "The LLM layer is not part of this report; it covers the numbers the LLM will be given.", "",
+              "## Per dataset", "",
+              "| Dataset | Model | Stage | True % | Est % | Tariff | Volume | Mix | Weather | Waste | MAE | Truth in range | Leak recall | False leaks | Saving in range | R2 | Seconds |",
+              "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |", *lines, "",
+              "## Configuration comparison", "", "| Model | Mean MAE (pp) | Worst single error (pp) | Truth inside range | Mean MAE on held-out sets |",
+              "| --- | --- | --- | --- | --- |"]
+    for model in ("ols", "ridge"):
+        a, h = agg(model), agg(model, held_out_only=True)
+        report.append(f"| {model} | {a[0]} | {a[1]} | {a[2]} | {h[0]} |")
+    first = results[f"{datasets[0].name}|ols|as_loaded"]
+    report += ["", "## Validation output (first dataset, as loaded)", ""]
+    report += [f"- [{'PASS' if c['passed'] else 'FLAG'}] {c['id']}. {c['check']}: {c['detail']}" for c in first["checks"]]
+    report += ["", "## Cleaning report (first dataset, as loaded)", "", "```json", json.dumps(first["quality"], indent=2), "```", ""]
+    (out / "report.md").write_text("\n".join(report), encoding="utf-8")
+    print("\n".join(report))
+
+
+if __name__ == "__main__":
+    main()

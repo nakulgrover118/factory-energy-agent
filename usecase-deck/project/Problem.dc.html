@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>The problem</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 1280px; height: 720px; box-sizing: border-box; padding: 56px 64px; background: #F6F7F8; color: #101820; font-family: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif; display: flex; flex-direction: column; gap: 24px">
+  <div style="display: flex; justify-content: space-between; align-items: center; font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; line-height: 16px; letter-spacing: 0.08em; text-transform: uppercase">
+    <span style="color: #0B6E6E">The problem</span>
+    <span style="color: #4B5663">02 / 08</span>
+  </div>
+  <h1 style="margin: 0; max-width: 1040px; font-size: 36px; line-height: 44px; font-weight: 600; letter-spacing: -0.01em; text-wrap: balance">The bill rose 15%. Finance needs to know why before anyone blames a machine.</h1>
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px">
+    <div style="background: #FFFFFF; border: 1px solid #D5DADF; border-radius: 10px; padding: 20px 22px; box-sizing: border-box; display: flex; flex-direction: column; gap: 14px">
+      <span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; line-height: 16px; letter-spacing: 0.08em; text-transform: uppercase; color: #4B5663">The situation</span>
+      <p style="margin: 0; font-size: 17px; line-height: 26px">The electricity bill is up 15% on last quarter.</p>
+      <p style="margin: 0; font-size: 17px; line-height: 26px">The factory meters the main supply and sub-meters on compressors, heating and cooling, furnaces, lighting and production lines.</p>
+      <p style="margin: 0; font-size: 17px; line-height: 26px">Finance wants to know whether it was tariff, output, product mix, weather, or energy being wasted.</p>
+    </div>
+    <div style="background: #FFFFFF; border: 1px solid #D5DADF; border-radius: 10px; padding: 20px 22px; box-sizing: border-box; display: flex; flex-direction: column; gap: 14px">
+      <span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; line-height: 16px; letter-spacing: 0.08em; text-transform: uppercase; color: #4B5663">Why it is hard</span>
+      <div style="display: flex; gap: 14px">
+        <span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 14px; line-height: 24px; font-weight: 500; color: #0B6E6E; width: 16px; flex: none">1</span>
+        <p style="margin: 0; font-size: 16px; line-height: 24px"><b style="font-weight: 600">The causes overlap.</b> Price, output, mix and weather all move at once, and the tariff changed part-way through the period.</p>
+      </div>
+      <div style="display: flex; gap: 14px">
+        <span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 14px; line-height: 24px; font-weight: 500; color: #0B6E6E; width: 16px; flex: none">2</span>
+        <p style="margin: 0; font-size: 16px; line-height: 24px"><b style="font-weight: 600">Blame arrives too early.</b> Old machines look guilty, but waste only counts once price, volume, mix and weather are removed.</p>
+      </div>
+      <div style="display: flex; gap: 14px">
+        <span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 14px; line-height: 24px; font-weight: 500; color: #0B6E6E; width: 16px; flex: none">3</span>
+        <p style="margin: 0; font-size: 16px; line-height: 24px"><b style="font-weight: 600">The data is messy.</b> Gaps, meter resets, sub-meters that do not sum to the main meter, and a holiday logged as a normal shift.</p>
+      </div>
+    </div>
+  </div>
+  <div style="display: flex; flex-direction: column; gap: 10px">
+    <span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; line-height: 16px; letter-spacing: 0.08em; text-transform: uppercase; color: #4B5663">What a good answer looks like</span>
+    <div style="display: flex; align-items: stretch; gap: 12px">
+      <div style="flex: 1; background: #FFFFFF; border: 1px solid #D5DADF; border-radius: 10px; padding: 14px 16px; box-sizing: border-box; font-size: 16px; line-height: 24px">A split of the 15% that adds up</div>
+      <span style="align-self: center; color: #0B6E6E; font-size: 20px; line-height: 24px">→</span>
+      <div style="flex: 1; background: #FFFFFF; border: 1px solid #D5DADF; border-radius: 10px; padding: 14px 16px; box-sizing: border-box; font-size: 16px; line-height: 24px">Waste found, with evidence</div>
+      <span style="align-self: center; color: #0B6E6E; font-size: 20px; line-height: 24px">→</span>
+      <div style="flex: 1; background: #FFFFFF; border: 1px solid #D5DADF; border-radius: 10px; padding: 14px 16px; box-sizing: border-box; font-size: 16px; line-height: 24px">Actions with savings ranges and payback</div>
+      <span style="align-self: center; color: #0B6E6E; font-size: 20px; line-height: 24px">→</span>
+      <div style="flex: 1; background: #FFFFFF; border: 1px solid #D5DADF; border-radius: 10px; padding: 14px 16px; box-sizing: border-box; font-size: 16px; line-height: 24px">Every number traceable to a tool call</div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":720}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

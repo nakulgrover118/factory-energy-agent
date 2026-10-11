@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Guardrails and evaluation</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 1280px; height: 720px; box-sizing: border-box; padding: 56px 64px; background: #F6F7F8; color: #101820; font-family: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif; display: flex; flex-direction: column; gap: 24px">
+  <div style="display: flex; justify-content: space-between; align-items: center; font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; line-height: 16px; letter-spacing: 0.08em; text-transform: uppercase">
+    <span style="color: #0B6E6E">Guardrails and evaluation</span>
+    <span style="color: #4B5663">07 / 08</span>
+  </div>
+  <h1 style="margin: 0; max-width: 1152px; font-size: 36px; line-height: 44px; font-weight: 600; letter-spacing: -0.01em; text-wrap: balance">The LLM never invents a number, and every claim can be tested</h1>
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px">
+    <div style="background: #FFFFFF; border: 1px solid #D5DADF; border-radius: 10px; padding: 20px 22px; box-sizing: border-box; display: flex; flex-direction: column; gap: 14px">
+      <span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; line-height: 16px; letter-spacing: 0.08em; text-transform: uppercase; color: #4B5663">Built into the design</span>
+      <p style="margin: 0; font-size: 16px; line-height: 24px"><b style="font-weight: 600">Numbers come from tools.</b> A checker blocks any figure that is not in a tool result.</p>
+      <p style="margin: 0; font-size: 16px; line-height: 24px"><b style="font-weight: 600">Reason before blaming.</b> No machine is named until tariff, volume, mix and weather are removed.</p>
+      <p style="margin: 0; font-size: 16px; line-height: 24px"><b style="font-weight: 600">Ranges, not point values.</b> Savings and CO2e always carry a low and a high.</p>
+      <p style="margin: 0; font-size: 16px; line-height: 24px"><b style="font-weight: 600">Honest refusals.</b> not_in_data, clarification_needed and refused are first-class answers.</p>
+      <p style="margin: 0; font-size: 16px; line-height: 24px"><b style="font-weight: 600">Stated factors.</b> The emission factor comes from the data pack and is shown with every CO2e figure.</p>
+      <p style="margin: 0; font-size: 16px; line-height: 24px"><b style="font-weight: 600">Human approval.</b> Every action is a suggestion, with requires_approval set to true.</p>
+    </div>
+    <div style="background: #FFFFFF; border: 1px solid #D5DADF; border-radius: 10px; padding: 20px 22px; box-sizing: border-box; display: flex; flex-direction: column; gap: 14px">
+      <span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; line-height: 16px; letter-spacing: 0.08em; text-transform: uppercase; color: #4B5663">How we will measure it</span>
+      <p style="margin: 0; font-size: 16px; line-height: 24px"><b style="font-weight: 600">A test set of 20+ cases.</b> Price or mix not machines (3+), numeric (3+), unanswerable (2+), what-if (2+), invent-a-number (2+).</p>
+      <p style="margin: 0; font-size: 16px; line-height: 24px"><b style="font-weight: 600">Known-truth data.</b> Our own generator sets the true split, so decomposition error is measured in percentage points.</p>
+      <p style="margin: 0; font-size: 16px; line-height: 24px"><b style="font-weight: 600">Six metrics.</b> Decomposition error, reconciliation, waste detection, savings accuracy, number faithfulness, and p50 and p95 latency with tokens.</p>
+      <p style="margin: 0; font-size: 16px; line-height: 24px"><b style="font-weight: 600">Two configurations compared.</b> For example an OLS against a Ridge baseline, chosen on numbers and reported on held-out seeds.</p>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":720}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

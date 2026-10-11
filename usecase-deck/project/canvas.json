@@ -1,0 +1,31 @@
+{
+  "v": 3,
+  "createdOnFiles": { "v": 1, "at": "2026-10-11T06:12:46Z" },
+  "title": "Factory Energy: Use Case Design",
+  "launch": { "view": "canvas" },
+  "pages": [],
+  "boards": {
+    "Main.dc.html": { "x": 0, "y": 0, "w": 1280, "h": 720, "title": "Title" },
+    "Problem.dc.html": { "x": 1360, "y": 0, "w": 1280, "h": 720, "title": "The problem" },
+    "Capabilities.dc.html": { "x": 2720, "y": 0, "w": 1280, "h": 720, "title": "What it answers" },
+    "Data.dc.html": { "x": 4080, "y": 0, "w": 1280, "h": 720, "title": "Data and checks" },
+    "Approach.dc.html": { "x": 0, "y": 840, "w": 1280, "h": 720, "title": "Approach" },
+    "Architecture.dc.html": { "x": 1360, "y": 840, "w": 1280, "h": 720, "title": "Architecture" },
+    "Guardrails.dc.html": { "x": 2720, "y": 840, "w": 1280, "h": 720, "title": "Guardrails and evaluation" },
+    "Plan.dc.html": { "x": 4080, "y": 840, "w": 1280, "h": 720, "title": "Plan and risks" }
+  },
+  "order": [
+    "Main.dc.html",
+    "Problem.dc.html",
+    "Capabilities.dc.html",
+    "Data.dc.html",
+    "Approach.dc.html",
+    "Architecture.dc.html",
+    "Guardrails.dc.html",
+    "Plan.dc.html"
+  ],
+  "notes": {
+    "deck-title": { "x": 0, "y": -300, "text": "Factory Energy cost decomposition: use case design", "kind": "title1", "maxW": 5360 }
+  },
+  "designSystems": []
+}

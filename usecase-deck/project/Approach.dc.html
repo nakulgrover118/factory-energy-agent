@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Analysis approach</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 1280px; height: 720px; box-sizing: border-box; padding: 56px 64px; background: #F6F7F8; color: #101820; font-family: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif; display: flex; flex-direction: column; gap: 24px">
+  <div style="display: flex; justify-content: space-between; align-items: center; font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; line-height: 16px; letter-spacing: 0.08em; text-transform: uppercase">
+    <span style="color: #0B6E6E">Approach</span>
+    <span style="color: #4B5663">05 / 08</span>
+  </div>
+  <h1 style="margin: 0; max-width: 1152px; font-size: 36px; line-height: 44px; font-weight: 600; letter-spacing: -0.01em; text-wrap: balance">Remove the known causes first. What is left is waste.</h1>
+  <div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px">
+    <div style="background: #FFFFFF; border: 1px solid #D5DADF; border-radius: 10px; padding: 18px 16px; box-sizing: border-box; display: flex; flex-direction: column; gap: 10px">
+      <span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px; line-height: 16px; font-weight: 500; color: #0B6E6E">01</span>
+      <span style="font-size: 18px; line-height: 24px; font-weight: 600">Clean and align</span>
+      <p style="margin: 0; font-size: 14px; line-height: 20px">Resample 15-minute meters</p>
+      <p style="margin: 0; font-size: 14px; line-height: 20px">Join tariff, production, weather and shifts</p>
+      <p style="margin: 0; font-size: 14px; line-height: 20px">Fix gaps, duplicates and resets</p>
+    </div>
+    <div style="background: #FFFFFF; border: 1px solid #D5DADF; border-radius: 10px; padding: 18px 16px; box-sizing: border-box; display: flex; flex-direction: column; gap: 10px">
+      <span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px; line-height: 16px; font-weight: 500; color: #0B6E6E">02</span>
+      <span style="font-size: 18px; line-height: 24px; font-weight: 600">Baseline</span>
+      <p style="margin: 0; font-size: 14px; line-height: 20px">Daily kWh against units per product, degree-days, holidays</p>
+      <p style="margin: 0; font-size: 14px; line-height: 20px">Predicts expected energy</p>
+      <p style="margin: 0; font-size: 14px; line-height: 20px">Checked with R² and residuals</p>
+    </div>
+    <div style="background: #FFFFFF; border: 1px solid #D5DADF; border-radius: 10px; padding: 18px 16px; box-sizing: border-box; display: flex; flex-direction: column; gap: 10px">
+      <span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px; line-height: 16px; font-weight: 500; color: #0B6E6E">03</span>
+      <span style="font-size: 18px; line-height: 24px; font-weight: 600">Decompose</span>
+      <p style="margin: 0; font-size: 14px; line-height: 20px">Tariff: price change × current kWh</p>
+      <p style="margin: 0; font-size: 14px; line-height: 20px">Rest split into volume, mix, weather and waste</p>
+      <p style="margin: 0; font-size: 14px; line-height: 20px">Parts add up to the total</p>
+    </div>
+    <div style="background: #FFFFFF; border: 1px solid #D5DADF; border-radius: 10px; padding: 18px 16px; box-sizing: border-box; display: flex; flex-direction: column; gap: 10px">
+      <span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px; line-height: 16px; font-weight: 500; color: #B4440A">04</span>
+      <span style="font-size: 18px; line-height: 24px; font-weight: 600">Find waste</span>
+      <p style="margin: 0; font-size: 14px; line-height: 20px">Idle load when output is zero</p>
+      <p style="margin: 0; font-size: 14px; line-height: 20px">Night and weekend against daytime load</p>
+      <p style="margin: 0; font-size: 14px; line-height: 20px">Leak signature, with evidence</p>
+    </div>
+    <div style="background: #FFFFFF; border: 1px solid #D5DADF; border-radius: 10px; padding: 18px 16px; box-sizing: border-box; display: flex; flex-direction: column; gap: 10px">
+      <span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px; line-height: 16px; font-weight: 500; color: #B4440A">05</span>
+      <span style="font-size: 18px; line-height: 24px; font-weight: 600">Recommend</span>
+      <p style="margin: 0; font-size: 14px; line-height: 20px">Savings in kWh, money and CO2e as ranges</p>
+      <p style="margin: 0; font-size: 14px; line-height: 20px">Payback and ease of doing</p>
+      <p style="margin: 0; font-size: 14px; line-height: 20px">Ranked list; a manager approves</p>
+    </div>
+  </div>
+  <div style="background: #FFFFFF; border: 1px solid #D5DADF; border-radius: 10px; padding: 18px 22px; box-sizing: border-box; display: flex; flex-direction: column; gap: 12px">
+    <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 24px">
+      <span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; line-height: 16px; letter-spacing: 0.08em; text-transform: uppercase; color: #4B5663">Worked example, in points of last quarter’s bill</span>
+      <span style="font-size: 13px; line-height: 18px; color: #4B5663">Toy numbers to show the arithmetic, not data</span>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px">
+      <div style="background: #ECEFF1; border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px">
+        <span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; line-height: 16px; color: #4B5663">Last quarter</span>
+        <span style="font-size: 22px; line-height: 30px; font-weight: 600">100.0</span>
+      </div>
+      <div style="background: #E3F1F0; border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px">
+        <span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; line-height: 16px; color: #0B6E6E">Tariff</span>
+        <span style="font-size: 22px; line-height: 30px; font-weight: 600">+10.0</span>
+      </div>
+      <div style="background: #E3F1F0; border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px">
+        <span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; line-height: 16px; color: #0B6E6E">Volume</span>
+        <span style="font-size: 22px; line-height: 30px; font-weight: 600">+1.5</span>
+      </div>
+      <div style="background: #E3F1F0; border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px">
+        <span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; line-height: 16px; color: #0B6E6E">Mix</span>
+        <span style="font-size: 22px; line-height: 30px; font-weight: 600">+1.0</span>
+      </div>
+      <div style="background: #E3F1F0; border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px">
+        <span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; line-height: 16px; color: #0B6E6E">Weather</span>
+        <span style="font-size: 22px; line-height: 30px; font-weight: 600">+0.5</span>
+      </div>
+      <div style="background: #FBEBDD; border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px">
+        <span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; line-height: 16px; color: #B4440A">Waste</span>
+        <span style="font-size: 22px; line-height: 30px; font-weight: 600">+2.0</span>
+      </div>
+      <div style="background: #101820; color: #FFFFFF; border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px">
+        <span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; line-height: 16px; color: #C3CAD2">This quarter, +15%</span>
+        <span style="font-size: 22px; line-height: 30px; font-weight: 600">115.0</span>
+      </div>
+    </div>
+    <p style="margin: 0; font-size: 14px; line-height: 22px; color: #4B5663">Tariff = (new price − old price) × this quarter’s kWh. The energy change is priced at the old price, then split by the baseline into volume, mix, weather and waste. Each part carries a low–high range from a bootstrap.</p>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":720}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

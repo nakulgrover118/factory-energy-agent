@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>What the system answers</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 1280px; height: 720px; box-sizing: border-box; padding: 56px 64px; background: #F6F7F8; color: #101820; font-family: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif; display: flex; flex-direction: column; gap: 24px">
+  <div style="display: flex; justify-content: space-between; align-items: center; font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; line-height: 16px; letter-spacing: 0.08em; text-transform: uppercase">
+    <span style="color: #0B6E6E">What the system answers</span>
+    <span style="color: #4B5663">03 / 08</span>
+  </div>
+  <h1 style="margin: 0; max-width: 1040px; font-size: 36px; line-height: 44px; font-weight: 600; letter-spacing: -0.01em; text-wrap: balance">Six kinds of question, each with a defined answer</h1>
+  <div style="display: flex; flex-direction: column">
+    <div style="display: grid; grid-template-columns: 170px minmax(0, 1fr) minmax(0, 1fr); gap: 24px; padding: 0 0 10px 0; border-bottom: 1px solid #101820; font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; line-height: 16px; letter-spacing: 0.08em; text-transform: uppercase; color: #4B5663">
+      <span>Capability</span>
+      <span>Example request</span>
+      <span>What the answer contains</span>
+    </div>
+    <div style="display: grid; grid-template-columns: 170px minmax(0, 1fr) minmax(0, 1fr); gap: 24px; padding: 13px 0; border-bottom: 1px solid #D5DADF; font-size: 16px; line-height: 24px">
+      <span style="font-weight: 600; color: #0B6E6E">Bill bridge</span>
+      <span>“Why did the bill go up 15%?”</span>
+      <span>A split into five causes that adds up to the total</span>
+    </div>
+    <div style="display: grid; grid-template-columns: 170px minmax(0, 1fr) minmax(0, 1fr); gap: 24px; padding: 13px 0; border-bottom: 1px solid #D5DADF; font-size: 16px; line-height: 24px">
+      <span style="font-weight: 600; color: #0B6E6E">Top users</span>
+      <span>“Which assets use the most energy?”</span>
+      <span>A ranked list with each asset’s share of the total</span>
+    </div>
+    <div style="display: grid; grid-template-columns: 170px minmax(0, 1fr) minmax(0, 1fr); gap: 24px; padding: 13px 0; border-bottom: 1px solid #D5DADF; font-size: 16px; line-height: 24px">
+      <span style="font-weight: 600; color: #0B6E6E">Idle waste</span>
+      <span>“How much energy is used when nothing is produced?”</span>
+      <span>Idle-load kWh by asset and the hours it happens</span>
+    </div>
+    <div style="display: grid; grid-template-columns: 170px minmax(0, 1fr) minmax(0, 1fr); gap: 24px; padding: 13px 0; border-bottom: 1px solid #D5DADF; font-size: 16px; line-height: 24px">
+      <span style="font-weight: 600; color: #0B6E6E">Savings</span>
+      <span>“What should we do first?”</span>
+      <span>Actions with kWh, money and CO2e saved, each as a range</span>
+    </div>
+    <div style="display: grid; grid-template-columns: 170px minmax(0, 1fr) minmax(0, 1fr); gap: 24px; padding: 13px 0; border-bottom: 1px solid #D5DADF; font-size: 16px; line-height: 24px">
+      <span style="font-weight: 600; color: #0B6E6E">Ranking</span>
+      <span>“Which action pays back fastest?”</span>
+      <span>Actions ranked by payback and ease of doing</span>
+    </div>
+    <div style="display: grid; grid-template-columns: 170px minmax(0, 1fr) minmax(0, 1fr); gap: 24px; padding: 13px 0; border-bottom: 1px solid #D5DADF; font-size: 16px; line-height: 24px">
+      <span style="font-weight: 600; color: #B4440A">Out of scope</span>
+      <span>“What will the tariff be next year?”</span>
+      <span>A clear “not in the data”, not a guess</span>
+    </div>
+  </div>
+  <div style="display: flex; flex-direction: column; gap: 10px">
+    <span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; line-height: 16px; letter-spacing: 0.08em; text-transform: uppercase; color: #4B5663">Answer types returned by /analyze</span>
+    <div style="display: flex; flex-wrap: wrap; gap: 8px">
+      <span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px; line-height: 20px; padding: 4px 10px; border: 1px solid #C3CAD2; border-radius: 6px; background: #FFFFFF">decomposition</span>
+      <span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px; line-height: 20px; padding: 4px 10px; border: 1px solid #C3CAD2; border-radius: 6px; background: #FFFFFF">recommendation</span>
+      <span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px; line-height: 20px; padding: 4px 10px; border: 1px solid #C3CAD2; border-radius: 6px; background: #FFFFFF">calculated</span>
+      <span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px; line-height: 20px; padding: 4px 10px; border: 1px solid #C3CAD2; border-radius: 6px; background: #FFFFFF">not_in_data</span>
+      <span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px; line-height: 20px; padding: 4px 10px; border: 1px solid #C3CAD2; border-radius: 6px; background: #FFFFFF">clarification_needed</span>
+      <span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px; line-height: 20px; padding: 4px 10px; border: 1px solid #C3CAD2; border-radius: 6px; background: #FFFFFF">refused</span>
+    </div>
+    <p style="margin: 0; font-size: 15px; line-height: 22px; color: #4B5663">The system never controls equipment. Every action is a suggestion that a manager approves, so requires_approval is always true.</p>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":720}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

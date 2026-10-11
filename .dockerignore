@@ -1,0 +1,10 @@
+.venv
+.git
+.env
+data
+store
+eval
+usecase-deck
+__pycache__
+.pytest_cache
+*.pyc

@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Data and checks</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 1280px; height: 720px; box-sizing: border-box; padding: 56px 64px; background: #F6F7F8; color: #101820; font-family: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif; display: flex; flex-direction: column; gap: 24px">
+  <div style="display: flex; justify-content: space-between; align-items: center; font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; line-height: 16px; letter-spacing: 0.08em; text-transform: uppercase">
+    <span style="color: #0B6E6E">Data and preparation</span>
+    <span style="color: #4B5663">04 / 08</span>
+  </div>
+  <h1 style="margin: 0; max-width: 1152px; font-size: 36px; line-height: 44px; font-weight: 600; letter-spacing: -0.01em; text-wrap: balance">Data is validated first; six traps are handled on purpose</h1>
+  <div style="display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 24px">
+    <div style="background: #FFFFFF; border: 1px solid #D5DADF; border-radius: 10px; padding: 20px 22px; box-sizing: border-box; display: flex; flex-direction: column; gap: 14px">
+      <span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; line-height: 16px; letter-spacing: 0.08em; text-transform: uppercase; color: #4B5663">The data pack</span>
+      <div style="display: flex; flex-direction: column; gap: 2px">
+        <span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 14px; line-height: 20px; font-weight: 500; color: #0B6E6E">meter_15min.csv</span>
+        <span style="font-size: 15px; line-height: 22px">Energy per 15 minutes for the main supply and 8 sub-meters, over two quarters</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 2px">
+        <span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 14px; line-height: 20px; font-weight: 500; color: #0B6E6E">tariff.csv</span>
+        <span style="font-size: 15px; line-height: 22px">Price per kWh by time of day, with a change part-way through</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 2px">
+        <span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 14px; line-height: 20px; font-weight: 500; color: #0B6E6E">production.csv</span>
+        <span style="font-size: 15px; line-height: 22px">Daily volume, product mix and shift calendar</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 2px">
+        <span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 14px; line-height: 20px; font-weight: 500; color: #0B6E6E">weather.csv</span>
+        <span style="font-size: 15px; line-height: 22px">Daily temperature and degree-days</span>
+      </div>
+    </div>
+    <div style="background: #FFFFFF; border: 1px solid #D5DADF; border-radius: 10px; padding: 20px 22px; box-sizing: border-box; display: flex; flex-direction: column; gap: 8px">
+      <span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; line-height: 16px; letter-spacing: 0.08em; text-transform: uppercase; color: #4B5663">The traps and how we handle them</span>
+      <div style="display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 16px; padding: 8px 0; border-bottom: 1px solid #E3E7EB">
+        <span style="font-size: 15px; line-height: 22px; font-weight: 600">Sub-meters do not add up</span>
+        <span style="font-size: 14px; line-height: 22px">Report an unmetered remainder, never call it waste</span>
+      </div>
+      <div style="display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 16px; padding: 8px 0; border-bottom: 1px solid #E3E7EB">
+        <span style="font-size: 15px; line-height: 22px; font-weight: 600">Gaps and meter resets</span>
+        <span style="font-size: 14px; line-height: 22px">Flag gaps; detect resets, never count negative kWh</span>
+      </div>
+      <div style="display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 16px; padding: 8px 0; border-bottom: 1px solid #E3E7EB">
+        <span style="font-size: 15px; line-height: 22px; font-weight: 600">Mid-quarter tariff change</span>
+        <span style="font-size: 14px; line-height: 22px">Price every 15-minute interval by its timestamp</span>
+      </div>
+      <div style="display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 16px; padding: 8px 0; border-bottom: 1px solid #E3E7EB">
+        <span style="font-size: 15px; line-height: 22px; font-weight: 600">Mix shift, no waste</span>
+        <span style="font-size: 14px; line-height: 22px">Per-product coefficients put it in mix, not waste</span>
+      </div>
+      <div style="display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 16px; padding: 8px 0; border-bottom: 1px solid #E3E7EB">
+        <span style="font-size: 15px; line-height: 22px; font-weight: 600">Hot period raises cooling</span>
+        <span style="font-size: 14px; line-height: 22px">Degree-days in the baseline put it in weather</span>
+      </div>
+      <div style="display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 16px; padding: 8px 0 0 0">
+        <span style="font-size: 15px; line-height: 22px; font-weight: 600">Holiday logged as a shift</span>
+        <span style="font-size: 14px; line-height: 22px">Use is_holiday and zero units, not the shift calendar</span>
+      </div>
+    </div>
+  </div>
+  <div style="background: #FFFFFF; border: 1px solid #D5DADF; border-radius: 10px; padding: 16px 22px; box-sizing: border-box; display: flex; flex-direction: column; gap: 12px">
+    <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 24px">
+      <span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; line-height: 16px; letter-spacing: 0.08em; text-transform: uppercase; color: #4B5663">Six validation checks run before any analysis</span>
+      <span style="font-size: 13px; line-height: 18px; color: #4B5663">Bad rows are rejected and counted. Loader: CLI script and POST /ingest, same schema.</span>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px 24px; font-size: 14px; line-height: 22px">
+      <div style="display: flex; gap: 10px"><span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px; font-weight: 500; color: #0B6E6E">01</span><span>Sub-meters match main within tolerance</span></div>
+      <div style="display: flex; gap: 10px"><span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px; font-weight: 500; color: #0B6E6E">02</span><span>No negative energy; resets handled</span></div>
+      <div style="display: flex; gap: 10px"><span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px; font-weight: 500; color: #0B6E6E">03</span><span>Timestamps regular, one time zone</span></div>
+      <div style="display: flex; gap: 10px"><span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px; font-weight: 500; color: #0B6E6E">04</span><span>Tariff periods do not overlap, cover period</span></div>
+      <div style="display: flex; gap: 10px"><span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px; font-weight: 500; color: #0B6E6E">05</span><span>Production days match shift calendar</span></div>
+      <div style="display: flex; gap: 10px"><span style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px; font-weight: 500; color: #0B6E6E">06</span><span>Row counts match the data card</span></div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":720}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

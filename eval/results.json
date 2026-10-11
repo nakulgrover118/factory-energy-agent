@@ -1,0 +1,4140 @@
+{
+  "control|ols|as_loaded": {
+    "score": {
+      "total_true": 13.0278,
+      "total_est": 13.04,
+      "error_pp": {
+        "tariff": 0.01,
+        "volume": -0.02,
+        "product_mix": 0.03,
+        "weather": 0.02,
+        "waste": -0.02
+      },
+      "mae_pp": 0.02,
+      "max_abs_error_pp": 0.03,
+      "truth_in_range": {
+        "tariff": true,
+        "volume": true,
+        "product_mix": true,
+        "weather": true,
+        "waste": true
+      },
+      "reconciliation_gap_pp": 0.0,
+      "leak_recall": null,
+      "false_leak_claims": [],
+      "r2": 0.9983,
+      "seconds": 0.96
+    },
+    "bridge": {
+      "status": "ok",
+      "period": "2026-Q3",
+      "compare_to": "2026-Q2",
+      "bill_reference": 7647385.61,
+      "bill_current": 8644565.79,
+      "total_change_pct": 13.04,
+      "bridge": [
+        {
+          "cause": "tariff",
+          "pct_points": 7.82,
+          "range": [
+            7.81,
+            7.82
+          ],
+          "amount": 597375.61
+        },
+        {
+          "cause": "volume",
+          "pct_points": 1.97,
+          "range": [
+            1.87,
+            2.05
+          ],
+          "amount": 150329.71
+        },
+        {
+          "cause": "product_mix",
+          "pct_points": 2.23,
+          "range": [
+            2.0,
+            2.39
+          ],
+          "amount": 170841.53
+        },
+        {
+          "cause": "weather",
+          "pct_points": 1.04,
+          "range": [
+            0.94,
+            1.15
+          ],
+          "amount": 79848.93
+        },
+        {
+          "cause": "waste",
+          "pct_points": -0.02,
+          "range": [
+            -0.26,
+            0.27
+          ],
+          "amount": -1215.6
+        }
+      ],
+      "baseline": {
+        "model": "ols",
+        "r2": 0.9983,
+        "coefficients": {
+          "work": 45728.6608,
+          "idle": 18271.1857,
+          "units_A": 9.5589,
+          "units_B": 15.1604,
+          "units_C": 28.1137,
+          "cdd": 979.5011
+        },
+        "target": "daily cost at reference-quarter prices",
+        "trained_on": "2026-Q2"
+      },
+      "assumptions": [
+        "reference-quarter tariff schedule is the 'old' price for every interval",
+        "calendar effect (number of working days) is counted in volume",
+        "ranges are the 5th to 95th percentile of 200 bootstrap refits of the baseline"
+      ]
+    },
+    "leaks": [],
+    "actions": [],
+    "quality": {
+      "rows_in": 158054,
+      "duplicates_removed": 200,
+      "negative_readings": 1,
+      "missing_intervals": {
+        "compressors": 27,
+        "furnace": 32,
+        "hvac": 39,
+        "lighting": 28,
+        "line_1": 26,
+        "line_2": 27,
+        "line_3": 26,
+        "main": 28,
+        "utilities": 26
+      },
+      "filled_by_interpolation": 31,
+      "filled_by_typical_profile": 228,
+      "share_of_intervals_estimated": 0.00164,
+      "unmetered_share": 0.0254
+    },
+    "checks": [
+      {
+        "id": 1,
+        "check": "Sub-meters sum to main within tolerance",
+        "passed": true,
+        "detail": "sub-meters are 97.5% of main; unmetered remainder 2.5%"
+      },
+      {
+        "id": 2,
+        "check": "No negative energy; resets handled",
+        "passed": true,
+        "detail": "1 negative readings treated as meter resets and re-estimated"
+      },
+      {
+        "id": 3,
+        "check": "Timestamps regular and in one time zone",
+        "passed": true,
+        "detail": "0 off-grid timestamps; 258 missing meter intervals and 200 duplicate rows reported"
+      },
+      {
+        "id": 4,
+        "check": "Tariff periods do not overlap and cover the period",
+        "passed": true,
+        "detail": "4 tariff rows cover 2026-04-01 to 2026-09-30"
+      },
+      {
+        "id": 5,
+        "check": "Production days match the shift calendar",
+        "passed": false,
+        "detail": "1 day(s) logged as a shift with no output or on a holiday (2026-08-15); treated as non-working. "
+      },
+      {
+        "id": 6,
+        "check": "Row counts match the data card",
+        "passed": true,
+        "detail": "all tables match"
+      }
+    ]
+  },
+  "control|ols|after_late_drop": {
+    "score": {
+      "total_true": 12.5219,
+      "total_est": 12.53,
+      "error_pp": {
+        "tariff": 0.0,
+        "volume": -0.02,
+        "product_mix": 0.03,
+        "weather": 0.02,
+        "waste": -0.02
+      },
+      "mae_pp": 0.02,
+      "max_abs_error_pp": 0.03,
+      "truth_in_range": {
+        "tariff": true,
+        "volume": true,
+        "product_mix": true,
+        "weather": true,
+        "waste": true
+      },
+      "reconciliation_gap_pp": 0.0,
+      "leak_recall": null,
+      "false_leak_claims": [],
+      "r2": 0.9983,
+      "seconds": 0.92
+    },
+    "bridge": {
+      "status": "ok",
+      "period": "2026-Q3",
+      "compare_to": "2026-Q2",
+      "bill_reference": 7647385.61,
+      "bill_current": 8605874.7,
+      "total_change_pct": 12.53,
+      "bridge": [
+        {
+          "cause": "tariff",
+          "pct_points": 7.31,
+          "range": [
+            7.31,
+            7.31
+          ],
+          "amount": 558684.52
+        },
+        {
+          "cause": "volume",
+          "pct_points": 1.97,
+          "range": [
+            1.87,
+            2.05
+          ],
+          "amount": 150329.71
+        },
+        {
+          "cause": "product_mix",
+          "pct_points": 2.23,
+          "range": [
+            2.0,
+            2.39
+          ],
+          "amount": 170841.53
+        },
+        {
+          "cause": "weather",
+          "pct_points": 1.04,
+          "range": [
+            0.94,
+            1.15
+          ],
+          "amount": 79848.93
+        },
+        {
+          "cause": "waste",
+          "pct_points": -0.02,
+          "range": [
+            -0.26,
+            0.27
+          ],
+          "amount": -1215.6
+        }
+      ],
+      "baseline": {
+        "model": "ols",
+        "r2": 0.9983,
+        "coefficients": {
+          "work": 45728.6608,
+          "idle": 18271.1857,
+          "units_A": 9.5589,
+          "units_B": 15.1604,
+          "units_C": 28.1137,
+          "cdd": 979.5011
+        },
+        "target": "daily cost at reference-quarter prices",
+        "trained_on": "2026-Q2"
+      },
+      "assumptions": [
+        "reference-quarter tariff schedule is the 'old' price for every interval",
+        "calendar effect (number of working days) is counted in volume",
+        "ranges are the 5th to 95th percentile of 200 bootstrap refits of the baseline"
+      ]
+    },
+    "leaks": [],
+    "actions": [],
+    "quality": {
+      "rows_in": 158056,
+      "duplicates_removed": 175,
+      "negative_readings": 1,
+      "missing_intervals": {
+        "compressors": 27,
+        "furnace": 32,
+        "hvac": 39,
+        "lighting": 28,
+        "line_1": 26,
+        "line_3": 26,
+        "main": 28,
+        "utilities": 26
+      },
+      "filled_by_interpolation": 28,
+      "filled_by_typical_profile": 204,
+      "share_of_intervals_estimated": 0.00147,
+      "unmetered_share": 0.0336
+    },
+    "checks": [
+      {
+        "id": 1,
+        "check": "Sub-meters sum to main within tolerance",
+        "passed": true,
+        "detail": "sub-meters are 96.6% of main; unmetered remainder 3.4%"
+      },
+      {
+        "id": 2,
+        "check": "No negative energy; resets handled",
+        "passed": true,
+        "detail": "1 negative readings treated as meter resets and re-estimated"
+      },
+      {
+        "id": 3,
+        "check": "Timestamps regular and in one time zone",
+        "passed": true,
+        "detail": "0 off-grid timestamps; 231 missing meter intervals and 175 duplicate rows reported"
+      },
+      {
+        "id": 4,
+        "check": "Tariff periods do not overlap and cover the period",
+        "passed": true,
+        "detail": "4 tariff rows cover 2026-04-01 to 2026-09-30"
+      },
+      {
+        "id": 5,
+        "check": "Production days match the shift calendar",
+        "passed": false,
+        "detail": "1 day(s) logged as a shift with no output or on a holiday (2026-08-15); treated as non-working. "
+      },
+      {
+        "id": 6,
+        "check": "Row counts match the data card",
+        "passed": false,
+        "detail": "mismatch (found, card): {'meter_15min': (158056, 158054)}"
+      }
+    ]
+  },
+  "control|ridge|as_loaded": {
+    "score": {
+      "total_true": 13.0278,
+      "total_est": 13.04,
+      "error_pp": {
+        "tariff": 0.01,
+        "volume": -0.23,
+        "product_mix": -0.02,
+        "weather": -0.05,
+        "waste": 0.31
+      },
+      "mae_pp": 0.12,
+      "max_abs_error_pp": 0.31,
+      "truth_in_range": {
+        "tariff": true,
+        "volume": false,
+        "product_mix": true,
+        "weather": true,
+        "waste": false
+      },
+      "reconciliation_gap_pp": 0.0,
+      "leak_recall": null,
+      "false_leak_claims": [],
+      "r2": 0.998,
+      "seconds": 1.14
+    },
+    "bridge": {
+      "status": "ok",
+      "period": "2026-Q3",
+      "compare_to": "2026-Q2",
+      "bill_reference": 7647385.61,
+      "bill_current": 8644565.79,
+      "total_change_pct": 13.04,
+      "bridge": [
+        {
+          "cause": "tariff",
+          "pct_points": 7.82,
+          "range": [
+            7.81,
+            7.82
+          ],
+          "amount": 597375.61
+        },
+        {
+          "cause": "volume",
+          "pct_points": 1.76,
+          "range": [
+            1.68,
+            1.84
+          ],
+          "amount": 134831.36
+        },
+        {
+          "cause": "product_mix",
+          "pct_points": 2.18,
+          "range": [
+            2.0,
+            2.36
+          ],
+          "amount": 166879.44
+        },
+        {
+          "cause": "weather",
+          "pct_points": 0.97,
+          "range": [
+            0.86,
+            1.09
+          ],
+          "amount": 74488.72
+        },
+        {
+          "cause": "waste",
+          "pct_points": 0.31,
+          "range": [
+            0.06,
+            0.63
+          ],
+          "amount": 23605.05
+        }
+      ],
+      "baseline": {
+        "model": "ridge",
+        "r2": 0.998,
+        "coefficients": {
+          "work": 58627.7506,
+          "idle": 18654.3523,
+          "units_A": 5.5432,
+          "units_B": 10.9554,
+          "units_C": 23.659,
+          "cdd": 913.7478
+        },
+        "target": "daily cost at reference-quarter prices",
+        "trained_on": "2026-Q2"
+      },
+      "assumptions": [
+        "reference-quarter tariff schedule is the 'old' price for every interval",
+        "calendar effect (number of working days) is counted in volume",
+        "ranges are the 5th to 95th percentile of 200 bootstrap refits of the baseline"
+      ]
+    },
+    "leaks": [],
+    "actions": [],
+    "quality": {
+      "rows_in": 158054,
+      "duplicates_removed": 200,
+      "negative_readings": 1,
+      "missing_intervals": {
+        "compressors": 27,
+        "furnace": 32,
+        "hvac": 39,
+        "lighting": 28,
+        "line_1": 26,
+        "line_2": 27,
+        "line_3": 26,
+        "main": 28,
+        "utilities": 26
+      },
+      "filled_by_interpolation": 31,
+      "filled_by_typical_profile": 228,
+      "share_of_intervals_estimated": 0.00164,
+      "unmetered_share": 0.0254
+    },
+    "checks": [
+      {
+        "id": 1,
+        "check": "Sub-meters sum to main within tolerance",
+        "passed": true,
+        "detail": "sub-meters are 97.5% of main; unmetered remainder 2.5%"
+      },
+      {
+        "id": 2,
+        "check": "No negative energy; resets handled",
+        "passed": true,
+        "detail": "1 negative readings treated as meter resets and re-estimated"
+      },
+      {
+        "id": 3,
+        "check": "Timestamps regular and in one time zone",
+        "passed": true,
+        "detail": "0 off-grid timestamps; 258 missing meter intervals and 200 duplicate rows reported"
+      },
+      {
+        "id": 4,
+        "check": "Tariff periods do not overlap and cover the period",
+        "passed": true,
+        "detail": "4 tariff rows cover 2026-04-01 to 2026-09-30"
+      },
+      {
+        "id": 5,
+        "check": "Production days match the shift calendar",
+        "passed": false,
+        "detail": "1 day(s) logged as a shift with no output or on a holiday (2026-08-15); treated as non-working. "
+      },
+      {
+        "id": 6,
+        "check": "Row counts match the data card",
+        "passed": true,
+        "detail": "all tables match"
+      }
+    ]
+  },
+  "control|ridge|after_late_drop": {
+    "score": {
+      "total_true": 12.5219,
+      "total_est": 12.53,
+      "error_pp": {
+        "tariff": 0.0,
+        "volume": -0.23,
+        "product_mix": -0.02,
+        "weather": -0.05,
+        "waste": 0.31
+      },
+      "mae_pp": 0.12,
+      "max_abs_error_pp": 0.31,
+      "truth_in_range": {
+        "tariff": true,
+        "volume": false,
+        "product_mix": true,
+        "weather": true,
+        "waste": false
+      },
+      "reconciliation_gap_pp": 0.0,
+      "leak_recall": null,
+      "false_leak_claims": [],
+      "r2": 0.998,
+      "seconds": 1.34
+    },
+    "bridge": {
+      "status": "ok",
+      "period": "2026-Q3",
+      "compare_to": "2026-Q2",
+      "bill_reference": 7647385.61,
+      "bill_current": 8605874.7,
+      "total_change_pct": 12.53,
+      "bridge": [
+        {
+          "cause": "tariff",
+          "pct_points": 7.31,
+          "range": [
+            7.31,
+            7.31
+          ],
+          "amount": 558684.52
+        },
+        {
+          "cause": "volume",
+          "pct_points": 1.76,
+          "range": [
+            1.68,
+            1.84
+          ],
+          "amount": 134831.36
+        },
+        {
+          "cause": "product_mix",
+          "pct_points": 2.18,
+          "range": [
+            2.0,
+            2.36
+          ],
+          "amount": 166879.44
+        },
+        {
+          "cause": "weather",
+          "pct_points": 0.97,
+          "range": [
+            0.86,
+            1.09
+          ],
+          "amount": 74488.72
+        },
+        {
+          "cause": "waste",
+          "pct_points": 0.31,
+          "range": [
+            0.06,
+            0.63
+          ],
+          "amount": 23605.05
+        }
+      ],
+      "baseline": {
+        "model": "ridge",
+        "r2": 0.998,
+        "coefficients": {
+          "work": 58627.7506,
+          "idle": 18654.3523,
+          "units_A": 5.5432,
+          "units_B": 10.9554,
+          "units_C": 23.659,
+          "cdd": 913.7478
+        },
+        "target": "daily cost at reference-quarter prices",
+        "trained_on": "2026-Q2"
+      },
+      "assumptions": [
+        "reference-quarter tariff schedule is the 'old' price for every interval",
+        "calendar effect (number of working days) is counted in volume",
+        "ranges are the 5th to 95th percentile of 200 bootstrap refits of the baseline"
+      ]
+    },
+    "leaks": [],
+    "actions": [],
+    "quality": {
+      "rows_in": 158056,
+      "duplicates_removed": 175,
+      "negative_readings": 1,
+      "missing_intervals": {
+        "compressors": 27,
+        "furnace": 32,
+        "hvac": 39,
+        "lighting": 28,
+        "line_1": 26,
+        "line_3": 26,
+        "main": 28,
+        "utilities": 26
+      },
+      "filled_by_interpolation": 28,
+      "filled_by_typical_profile": 204,
+      "share_of_intervals_estimated": 0.00147,
+      "unmetered_share": 0.0336
+    },
+    "checks": [
+      {
+        "id": 1,
+        "check": "Sub-meters sum to main within tolerance",
+        "passed": true,
+        "detail": "sub-meters are 96.6% of main; unmetered remainder 3.4%"
+      },
+      {
+        "id": 2,
+        "check": "No negative energy; resets handled",
+        "passed": true,
+        "detail": "1 negative readings treated as meter resets and re-estimated"
+      },
+      {
+        "id": 3,
+        "check": "Timestamps regular and in one time zone",
+        "passed": true,
+        "detail": "0 off-grid timestamps; 231 missing meter intervals and 175 duplicate rows reported"
+      },
+      {
+        "id": 4,
+        "check": "Tariff periods do not overlap and cover the period",
+        "passed": true,
+        "detail": "4 tariff rows cover 2026-04-01 to 2026-09-30"
+      },
+      {
+        "id": 5,
+        "check": "Production days match the shift calendar",
+        "passed": false,
+        "detail": "1 day(s) logged as a shift with no output or on a holiday (2026-08-15); treated as non-working. "
+      },
+      {
+        "id": 6,
+        "check": "Row counts match the data card",
+        "passed": false,
+        "detail": "mismatch (found, card): {'meter_15min': (158056, 158054)}"
+      }
+    ]
+  },
+  "seed_1|ols|as_loaded": {
+    "score": {
+      "total_true": 14.6726,
+      "total_est": 14.66,
+      "error_pp": {
+        "tariff": 0.01,
+        "volume": 0.13,
+        "product_mix": 0.11,
+        "weather": -0.04,
+        "waste": -0.23
+      },
+      "mae_pp": 0.1,
+      "max_abs_error_pp": 0.23,
+      "truth_in_range": {
+        "tariff": true,
+        "volume": true,
+        "product_mix": true,
+        "weather": true,
+        "waste": true
+      },
+      "reconciliation_gap_pp": 0.0,
+      "leak_recall": 1.0,
+      "false_leak_claims": [],
+      "r2": 0.9984,
+      "seconds": 1.13,
+      "saving_true_kwh": 87600.0,
+      "saving_range_kwh": [
+        77351,
+        96623
+      ],
+      "saving_in_range": true,
+      "leak_start_found": "2026-07-20",
+      "leak_start_true": "2026-07-20"
+    },
+    "bridge": {
+      "status": "ok",
+      "period": "2026-Q3",
+      "compare_to": "2026-Q2",
+      "bill_reference": 7615172.81,
+      "bill_current": 8731851.74,
+      "total_change_pct": 14.66,
+      "bridge": [
+        {
+          "cause": "tariff",
+          "pct_points": 7.95,
+          "range": [
+            7.94,
+            7.95
+          ],
+          "amount": 604598.97
+        },
+        {
+          "cause": "volume",
+          "pct_points": 2.67,
+          "range": [
+            2.49,
+            2.84
+          ],
+          "amount": 203552.8
+        },
+        {
+          "cause": "product_mix",
+          "pct_points": 1.87,
+          "range": [
+            1.68,
+            2.08
+          ],
+          "amount": 142763.59
+        },
+        {
+          "cause": "weather",
+          "pct_points": 0.71,
+          "range": [
+            0.66,
+            0.78
+          ],
+          "amount": 54375.25
+        },
+        {
+          "cause": "waste",
+          "pct_points": 1.46,
+          "range": [
+            1.14,
+            1.75
+          ],
+          "amount": 111388.32
+        }
+      ],
+      "baseline": {
+        "model": "ols",
+        "r2": 0.9984,
+        "coefficients": {
+          "work": 45557.1137,
+          "idle": 18479.604,
+          "units_A": 8.9893,
+          "units_B": 16.3392,
+          "units_C": 28.6958,
+          "cdd": 912.4895
+        },
+        "target": "daily cost at reference-quarter prices",
+        "trained_on": "2026-Q2"
+      },
+      "assumptions": [
+        "reference-quarter tariff schedule is the 'old' price for every interval",
+        "calendar effect (number of working days) is counted in volume",
+        "ranges are the 5th to 95th percentile of 200 bootstrap refits of the baseline"
+      ]
+    },
+    "leaks": [
+      {
+        "asset": "compressors",
+        "pattern": "night load stepped up and stayed up",
+        "from": "2026-07-20",
+        "excess_kw": 9.92,
+        "excess_kw_range": [
+          8.83,
+          11.03
+        ],
+        "reference_night_kw": 38.25,
+        "rise_pct": 25.9,
+        "days_observed": 73,
+        "evidence_refs": [
+          "meter_15min:compressors:2026-07-20..2026-09-30:00-05h"
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "action": "Find and repair the leak on compressors",
+        "asset": "compressors",
+        "saving_kwh_per_year": [
+          77351,
+          96623
+        ],
+        "saving_money_per_year": [
+          660062,
+          824516
+        ],
+        "saving_co2e_t_per_year": [
+          30.9,
+          38.6
+        ],
+        "payback_months": [
+          0.3,
+          1.1
+        ],
+        "ease": "easy",
+        "rationale": "Night load on compressors rose 25.9% from 2026-07-20 and stayed up on idle days.",
+        "evidence_refs": [
+          "meter_15min:compressors:2026-07-20..2026-09-30:00-05h"
+        ],
+        "confidence": "medium",
+        "requires_approval": true,
+        "assumptions": [
+          "price 8.53 per kWh (current tariff, flat load)",
+          "emission factor 0.4 kg CO2e per kWh",
+          "repair cost 20000 to 60000 (assumed, not in data)"
+        ]
+      }
+    ],
+    "quality": {
+      "rows_in": 158054,
+      "duplicates_removed": 200,
+      "negative_readings": 1,
+      "missing_intervals": {
+        "compressors": 26,
+        "furnace": 28,
+        "hvac": 39,
+        "lighting": 28,
+        "line_1": 28,
+        "line_2": 29,
+        "line_3": 28,
+        "main": 26,
+        "utilities": 27
+      },
+      "filled_by_interpolation": 31,
+      "filled_by_typical_profile": 228,
+      "share_of_intervals_estimated": 0.00164,
+      "unmetered_share": 0.0251
+    },
+    "checks": [
+      {
+        "id": 1,
+        "check": "Sub-meters sum to main within tolerance",
+        "passed": true,
+        "detail": "sub-meters are 97.5% of main; unmetered remainder 2.5%"
+      },
+      {
+        "id": 2,
+        "check": "No negative energy; resets handled",
+        "passed": true,
+        "detail": "1 negative readings treated as meter resets and re-estimated"
+      },
+      {
+        "id": 3,
+        "check": "Timestamps regular and in one time zone",
+        "passed": true,
+        "detail": "0 off-grid timestamps; 258 missing meter intervals and 200 duplicate rows reported"
+      },
+      {
+        "id": 4,
+        "check": "Tariff periods do not overlap and cover the period",
+        "passed": true,
+        "detail": "4 tariff rows cover 2026-04-01 to 2026-09-30"
+      },
+      {
+        "id": 5,
+        "check": "Production days match the shift calendar",
+        "passed": false,
+        "detail": "1 day(s) logged as a shift with no output or on a holiday (2026-08-15); treated as non-working. "
+      },
+      {
+        "id": 6,
+        "check": "Row counts match the data card",
+        "passed": true,
+        "detail": "all tables match"
+      }
+    ]
+  },
+  "seed_1|ols|after_late_drop": {
+    "score": {
+      "total_true": 14.1345,
+      "total_est": 14.13,
+      "error_pp": {
+        "tariff": 0.02,
+        "volume": 0.13,
+        "product_mix": 0.11,
+        "weather": -0.04,
+        "waste": -0.23
+      },
+      "mae_pp": 0.11,
+      "max_abs_error_pp": 0.23,
+      "truth_in_range": {
+        "tariff": true,
+        "volume": true,
+        "product_mix": true,
+        "weather": true,
+        "waste": true
+      },
+      "reconciliation_gap_pp": 0.0,
+      "leak_recall": 1.0,
+      "false_leak_claims": [],
+      "r2": 0.9984,
+      "seconds": 1.36,
+      "saving_true_kwh": 87600.0,
+      "saving_range_kwh": [
+        77351,
+        96623
+      ],
+      "saving_in_range": true,
+      "leak_start_found": "2026-07-20",
+      "leak_start_true": "2026-07-20"
+    },
+    "bridge": {
+      "status": "ok",
+      "period": "2026-Q3",
+      "compare_to": "2026-Q2",
+      "bill_reference": 7615172.81,
+      "bill_current": 8690879.21,
+      "total_change_pct": 14.13,
+      "bridge": [
+        {
+          "cause": "tariff",
+          "pct_points": 7.42,
+          "range": [
+            7.4,
+            7.42
+          ],
+          "amount": 563626.44
+        },
+        {
+          "cause": "volume",
+          "pct_points": 2.67,
+          "range": [
+            2.49,
+            2.84
+          ],
+          "amount": 203552.8
+        },
+        {
+          "cause": "product_mix",
+          "pct_points": 1.87,
+          "range": [
+            1.68,
+            2.08
+          ],
+          "amount": 142763.59
+        },
+        {
+          "cause": "weather",
+          "pct_points": 0.71,
+          "range": [
+            0.66,
+            0.78
+          ],
+          "amount": 54375.25
+        },
+        {
+          "cause": "waste",
+          "pct_points": 1.46,
+          "range": [
+            1.14,
+            1.75
+          ],
+          "amount": 111388.32
+        }
+      ],
+      "baseline": {
+        "model": "ols",
+        "r2": 0.9984,
+        "coefficients": {
+          "work": 45557.1137,
+          "idle": 18479.604,
+          "units_A": 8.9893,
+          "units_B": 16.3392,
+          "units_C": 28.6958,
+          "cdd": 912.4895
+        },
+        "target": "daily cost at reference-quarter prices",
+        "trained_on": "2026-Q2"
+      },
+      "assumptions": [
+        "reference-quarter tariff schedule is the 'old' price for every interval",
+        "calendar effect (number of working days) is counted in volume",
+        "ranges are the 5th to 95th percentile of 200 bootstrap refits of the baseline"
+      ]
+    },
+    "leaks": [
+      {
+        "asset": "compressors",
+        "pattern": "night load stepped up and stayed up",
+        "from": "2026-07-20",
+        "excess_kw": 9.92,
+        "excess_kw_range": [
+          8.83,
+          11.03
+        ],
+        "reference_night_kw": 38.25,
+        "rise_pct": 25.9,
+        "days_observed": 73,
+        "evidence_refs": [
+          "meter_15min:compressors:2026-07-20..2026-09-30:00-05h"
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "action": "Find and repair the leak on compressors",
+        "asset": "compressors",
+        "saving_kwh_per_year": [
+          77351,
+          96623
+        ],
+        "saving_money_per_year": [
+          644592,
+          805192
+        ],
+        "saving_co2e_t_per_year": [
+          30.9,
+          38.6
+        ],
+        "payback_months": [
+          0.3,
+          1.1
+        ],
+        "ease": "easy",
+        "rationale": "Night load on compressors rose 25.9% from 2026-07-20 and stayed up on idle days.",
+        "evidence_refs": [
+          "meter_15min:compressors:2026-07-20..2026-09-30:00-05h"
+        ],
+        "confidence": "medium",
+        "requires_approval": true,
+        "assumptions": [
+          "price 8.33 per kWh (current tariff, flat load)",
+          "emission factor 0.4 kg CO2e per kWh",
+          "repair cost 20000 to 60000 (assumed, not in data)"
+        ]
+      }
+    ],
+    "quality": {
+      "rows_in": 158064,
+      "duplicates_removed": 181,
+      "negative_readings": 1,
+      "missing_intervals": {
+        "compressors": 26,
+        "furnace": 28,
+        "hvac": 39,
+        "lighting": 28,
+        "line_1": 28,
+        "line_3": 28,
+        "main": 26,
+        "utilities": 27
+      },
+      "filled_by_interpolation": 26,
+      "filled_by_typical_profile": 204,
+      "share_of_intervals_estimated": 0.00145,
+      "unmetered_share": 0.033
+    },
+    "checks": [
+      {
+        "id": 1,
+        "check": "Sub-meters sum to main within tolerance",
+        "passed": true,
+        "detail": "sub-meters are 96.7% of main; unmetered remainder 3.3%"
+      },
+      {
+        "id": 2,
+        "check": "No negative energy; resets handled",
+        "passed": true,
+        "detail": "1 negative readings treated as meter resets and re-estimated"
+      },
+      {
+        "id": 3,
+        "check": "Timestamps regular and in one time zone",
+        "passed": true,
+        "detail": "0 off-grid timestamps; 229 missing meter intervals and 181 duplicate rows reported"
+      },
+      {
+        "id": 4,
+        "check": "Tariff periods do not overlap and cover the period",
+        "passed": true,
+        "detail": "4 tariff rows cover 2026-04-01 to 2026-09-30"
+      },
+      {
+        "id": 5,
+        "check": "Production days match the shift calendar",
+        "passed": false,
+        "detail": "1 day(s) logged as a shift with no output or on a holiday (2026-08-15); treated as non-working. "
+      },
+      {
+        "id": 6,
+        "check": "Row counts match the data card",
+        "passed": false,
+        "detail": "mismatch (found, card): {'meter_15min': (158064, 158054)}"
+      }
+    ]
+  },
+  "seed_1|ridge|as_loaded": {
+    "score": {
+      "total_true": 14.6726,
+      "total_est": 14.66,
+      "error_pp": {
+        "tariff": 0.0,
+        "volume": -0.29,
+        "product_mix": 0.05,
+        "weather": -0.07,
+        "waste": 0.29
+      },
+      "mae_pp": 0.14,
+      "max_abs_error_pp": 0.29,
+      "truth_in_range": {
+        "tariff": true,
+        "volume": false,
+        "product_mix": true,
+        "weather": false,
+        "waste": false
+      },
+      "reconciliation_gap_pp": 0.0,
+      "leak_recall": 1.0,
+      "false_leak_claims": [],
+      "r2": 0.9981,
+      "seconds": 1.18,
+      "saving_true_kwh": 87600.0,
+      "saving_range_kwh": [
+        77351,
+        96623
+      ],
+      "saving_in_range": true,
+      "leak_start_found": "2026-07-20",
+      "leak_start_true": "2026-07-20"
+    },
+    "bridge": {
+      "status": "ok",
+      "period": "2026-Q3",
+      "compare_to": "2026-Q2",
+      "bill_reference": 7615172.81,
+      "bill_current": 8731851.74,
+      "total_change_pct": 14.66,
+      "bridge": [
+        {
+          "cause": "tariff",
+          "pct_points": 7.94,
+          "range": [
+            7.94,
+            7.94
+          ],
+          "amount": 604598.97
+        },
+        {
+          "cause": "volume",
+          "pct_points": 2.25,
+          "range": [
+            2.07,
+            2.37
+          ],
+          "amount": 171122.96
+        },
+        {
+          "cause": "product_mix",
+          "pct_points": 1.81,
+          "range": [
+            1.6,
+            1.97
+          ],
+          "amount": 137968.63
+        },
+        {
+          "cause": "weather",
+          "pct_points": 0.68,
+          "range": [
+            0.62,
+            0.74
+          ],
+          "amount": 51883.02
+        },
+        {
+          "cause": "waste",
+          "pct_points": 1.98,
+          "range": [
+            1.74,
+            2.32
+          ],
+          "amount": 151105.36
+        }
+      ],
+      "baseline": {
+        "model": "ridge",
+        "r2": 0.9981,
+        "coefficients": {
+          "work": 59182.1372,
+          "idle": 18672.3524,
+          "units_A": 4.8527,
+          "units_B": 11.5227,
+          "units_C": 23.841,
+          "cdd": 870.6665
+        },
+        "target": "daily cost at reference-quarter prices",
+        "trained_on": "2026-Q2"
+      },
+      "assumptions": [
+        "reference-quarter tariff schedule is the 'old' price for every interval",
+        "calendar effect (number of working days) is counted in volume",
+        "ranges are the 5th to 95th percentile of 200 bootstrap refits of the baseline"
+      ]
+    },
+    "leaks": [
+      {
+        "asset": "compressors",
+        "pattern": "night load stepped up and stayed up",
+        "from": "2026-07-20",
+        "excess_kw": 9.92,
+        "excess_kw_range": [
+          8.83,
+          11.03
+        ],
+        "reference_night_kw": 38.25,
+        "rise_pct": 25.9,
+        "days_observed": 73,
+        "evidence_refs": [
+          "meter_15min:compressors:2026-07-20..2026-09-30:00-05h"
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "action": "Find and repair the leak on compressors",
+        "asset": "compressors",
+        "saving_kwh_per_year": [
+          77351,
+          96623
+        ],
+        "saving_money_per_year": [
+          660062,
+          824516
+        ],
+        "saving_co2e_t_per_year": [
+          30.9,
+          38.6
+        ],
+        "payback_months": [
+          0.3,
+          1.1
+        ],
+        "ease": "easy",
+        "rationale": "Night load on compressors rose 25.9% from 2026-07-20 and stayed up on idle days.",
+        "evidence_refs": [
+          "meter_15min:compressors:2026-07-20..2026-09-30:00-05h"
+        ],
+        "confidence": "medium",
+        "requires_approval": true,
+        "assumptions": [
+          "price 8.53 per kWh (current tariff, flat load)",
+          "emission factor 0.4 kg CO2e per kWh",
+          "repair cost 20000 to 60000 (assumed, not in data)"
+        ]
+      }
+    ],
+    "quality": {
+      "rows_in": 158054,
+      "duplicates_removed": 200,
+      "negative_readings": 1,
+      "missing_intervals": {
+        "compressors": 26,
+        "furnace": 28,
+        "hvac": 39,
+        "lighting": 28,
+        "line_1": 28,
+        "line_2": 29,
+        "line_3": 28,
+        "main": 26,
+        "utilities": 27
+      },
+      "filled_by_interpolation": 31,
+      "filled_by_typical_profile": 228,
+      "share_of_intervals_estimated": 0.00164,
+      "unmetered_share": 0.0251
+    },
+    "checks": [
+      {
+        "id": 1,
+        "check": "Sub-meters sum to main within tolerance",
+        "passed": true,
+        "detail": "sub-meters are 97.5% of main; unmetered remainder 2.5%"
+      },
+      {
+        "id": 2,
+        "check": "No negative energy; resets handled",
+        "passed": true,
+        "detail": "1 negative readings treated as meter resets and re-estimated"
+      },
+      {
+        "id": 3,
+        "check": "Timestamps regular and in one time zone",
+        "passed": true,
+        "detail": "0 off-grid timestamps; 258 missing meter intervals and 200 duplicate rows reported"
+      },
+      {
+        "id": 4,
+        "check": "Tariff periods do not overlap and cover the period",
+        "passed": true,
+        "detail": "4 tariff rows cover 2026-04-01 to 2026-09-30"
+      },
+      {
+        "id": 5,
+        "check": "Production days match the shift calendar",
+        "passed": false,
+        "detail": "1 day(s) logged as a shift with no output or on a holiday (2026-08-15); treated as non-working. "
+      },
+      {
+        "id": 6,
+        "check": "Row counts match the data card",
+        "passed": true,
+        "detail": "all tables match"
+      }
+    ]
+  },
+  "seed_1|ridge|after_late_drop": {
+    "score": {
+      "total_true": 14.1345,
+      "total_est": 14.13,
+      "error_pp": {
+        "tariff": 0.01,
+        "volume": -0.29,
+        "product_mix": 0.05,
+        "weather": -0.07,
+        "waste": 0.29
+      },
+      "mae_pp": 0.14,
+      "max_abs_error_pp": 0.29,
+      "truth_in_range": {
+        "tariff": true,
+        "volume": false,
+        "product_mix": true,
+        "weather": false,
+        "waste": false
+      },
+      "reconciliation_gap_pp": 0.0,
+      "leak_recall": 1.0,
+      "false_leak_claims": [],
+      "r2": 0.9981,
+      "seconds": 0.99,
+      "saving_true_kwh": 87600.0,
+      "saving_range_kwh": [
+        77351,
+        96623
+      ],
+      "saving_in_range": true,
+      "leak_start_found": "2026-07-20",
+      "leak_start_true": "2026-07-20"
+    },
+    "bridge": {
+      "status": "ok",
+      "period": "2026-Q3",
+      "compare_to": "2026-Q2",
+      "bill_reference": 7615172.81,
+      "bill_current": 8690879.21,
+      "total_change_pct": 14.13,
+      "bridge": [
+        {
+          "cause": "tariff",
+          "pct_points": 7.41,
+          "range": [
+            7.4,
+            7.41
+          ],
+          "amount": 563626.44
+        },
+        {
+          "cause": "volume",
+          "pct_points": 2.25,
+          "range": [
+            2.07,
+            2.37
+          ],
+          "amount": 171122.96
+        },
+        {
+          "cause": "product_mix",
+          "pct_points": 1.81,
+          "range": [
+            1.6,
+            1.97
+          ],
+          "amount": 137968.63
+        },
+        {
+          "cause": "weather",
+          "pct_points": 0.68,
+          "range": [
+            0.62,
+            0.74
+          ],
+          "amount": 51883.02
+        },
+        {
+          "cause": "waste",
+          "pct_points": 1.98,
+          "range": [
+            1.74,
+            2.32
+          ],
+          "amount": 151105.36
+        }
+      ],
+      "baseline": {
+        "model": "ridge",
+        "r2": 0.9981,
+        "coefficients": {
+          "work": 59182.1372,
+          "idle": 18672.3524,
+          "units_A": 4.8527,
+          "units_B": 11.5227,
+          "units_C": 23.841,
+          "cdd": 870.6665
+        },
+        "target": "daily cost at reference-quarter prices",
+        "trained_on": "2026-Q2"
+      },
+      "assumptions": [
+        "reference-quarter tariff schedule is the 'old' price for every interval",
+        "calendar effect (number of working days) is counted in volume",
+        "ranges are the 5th to 95th percentile of 200 bootstrap refits of the baseline"
+      ]
+    },
+    "leaks": [
+      {
+        "asset": "compressors",
+        "pattern": "night load stepped up and stayed up",
+        "from": "2026-07-20",
+        "excess_kw": 9.92,
+        "excess_kw_range": [
+          8.83,
+          11.03
+        ],
+        "reference_night_kw": 38.25,
+        "rise_pct": 25.9,
+        "days_observed": 73,
+        "evidence_refs": [
+          "meter_15min:compressors:2026-07-20..2026-09-30:00-05h"
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "action": "Find and repair the leak on compressors",
+        "asset": "compressors",
+        "saving_kwh_per_year": [
+          77351,
+          96623
+        ],
+        "saving_money_per_year": [
+          644592,
+          805192
+        ],
+        "saving_co2e_t_per_year": [
+          30.9,
+          38.6
+        ],
+        "payback_months": [
+          0.3,
+          1.1
+        ],
+        "ease": "easy",
+        "rationale": "Night load on compressors rose 25.9% from 2026-07-20 and stayed up on idle days.",
+        "evidence_refs": [
+          "meter_15min:compressors:2026-07-20..2026-09-30:00-05h"
+        ],
+        "confidence": "medium",
+        "requires_approval": true,
+        "assumptions": [
+          "price 8.33 per kWh (current tariff, flat load)",
+          "emission factor 0.4 kg CO2e per kWh",
+          "repair cost 20000 to 60000 (assumed, not in data)"
+        ]
+      }
+    ],
+    "quality": {
+      "rows_in": 158064,
+      "duplicates_removed": 181,
+      "negative_readings": 1,
+      "missing_intervals": {
+        "compressors": 26,
+        "furnace": 28,
+        "hvac": 39,
+        "lighting": 28,
+        "line_1": 28,
+        "line_3": 28,
+        "main": 26,
+        "utilities": 27
+      },
+      "filled_by_interpolation": 26,
+      "filled_by_typical_profile": 204,
+      "share_of_intervals_estimated": 0.00145,
+      "unmetered_share": 0.033
+    },
+    "checks": [
+      {
+        "id": 1,
+        "check": "Sub-meters sum to main within tolerance",
+        "passed": true,
+        "detail": "sub-meters are 96.7% of main; unmetered remainder 3.3%"
+      },
+      {
+        "id": 2,
+        "check": "No negative energy; resets handled",
+        "passed": true,
+        "detail": "1 negative readings treated as meter resets and re-estimated"
+      },
+      {
+        "id": 3,
+        "check": "Timestamps regular and in one time zone",
+        "passed": true,
+        "detail": "0 off-grid timestamps; 229 missing meter intervals and 181 duplicate rows reported"
+      },
+      {
+        "id": 4,
+        "check": "Tariff periods do not overlap and cover the period",
+        "passed": true,
+        "detail": "4 tariff rows cover 2026-04-01 to 2026-09-30"
+      },
+      {
+        "id": 5,
+        "check": "Production days match the shift calendar",
+        "passed": false,
+        "detail": "1 day(s) logged as a shift with no output or on a holiday (2026-08-15); treated as non-working. "
+      },
+      {
+        "id": 6,
+        "check": "Row counts match the data card",
+        "passed": false,
+        "detail": "mismatch (found, card): {'meter_15min': (158064, 158054)}"
+      }
+    ]
+  },
+  "seed_2|ols|as_loaded": {
+    "score": {
+      "total_true": 15.5954,
+      "total_est": 15.58,
+      "error_pp": {
+        "tariff": -0.01,
+        "volume": 0.1,
+        "product_mix": 0.04,
+        "weather": -0.01,
+        "waste": -0.12
+      },
+      "mae_pp": 0.06,
+      "max_abs_error_pp": 0.12,
+      "truth_in_range": {
+        "tariff": true,
+        "volume": true,
+        "product_mix": true,
+        "weather": true,
+        "waste": true
+      },
+      "reconciliation_gap_pp": 0.0,
+      "leak_recall": 1.0,
+      "false_leak_claims": [],
+      "r2": 0.9985,
+      "seconds": 1.1,
+      "saving_true_kwh": 87600.0,
+      "saving_range_kwh": [
+        77789,
+        96973
+      ],
+      "saving_in_range": true,
+      "leak_start_found": "2026-07-20",
+      "leak_start_true": "2026-07-20"
+    },
+    "bridge": {
+      "status": "ok",
+      "period": "2026-Q3",
+      "compare_to": "2026-Q2",
+      "bill_reference": 7554043.34,
+      "bill_current": 8731328.31,
+      "total_change_pct": 15.58,
+      "bridge": [
+        {
+          "cause": "tariff",
+          "pct_points": 7.98,
+          "range": [
+            7.98,
+            7.99
+          ],
+          "amount": 603559.64
+        },
+        {
+          "cause": "volume",
+          "pct_points": 2.39,
+          "range": [
+            2.25,
+            2.53
+          ],
+          "amount": 180229.65
+        },
+        {
+          "cause": "product_mix",
+          "pct_points": 2.39,
+          "range": [
+            2.21,
+            2.58
+          ],
+          "amount": 180505.86
+        },
+        {
+          "cause": "weather",
+          "pct_points": 1.24,
+          "range": [
+            1.15,
+            1.34
+          ],
+          "amount": 93958.2
+        },
+        {
+          "cause": "waste",
+          "pct_points": 1.58,
+          "range": [
+            1.31,
+            1.82
+          ],
+          "amount": 119031.63
+        }
+      ],
+      "baseline": {
+        "model": "ols",
+        "r2": 0.9985,
+        "coefficients": {
+          "work": 45684.1413,
+          "idle": 18417.3255,
+          "units_A": 9.5235,
+          "units_B": 15.4688,
+          "units_C": 28.0141,
+          "cdd": 952.5365
+        },
+        "target": "daily cost at reference-quarter prices",
+        "trained_on": "2026-Q2"
+      },
+      "assumptions": [
+        "reference-quarter tariff schedule is the 'old' price for every interval",
+        "calendar effect (number of working days) is counted in volume",
+        "ranges are the 5th to 95th percentile of 200 bootstrap refits of the baseline"
+      ]
+    },
+    "leaks": [
+      {
+        "asset": "compressors",
+        "pattern": "night load stepped up and stayed up",
+        "from": "2026-07-20",
+        "excess_kw": 9.97,
+        "excess_kw_range": [
+          8.88,
+          11.07
+        ],
+        "reference_night_kw": 38.23,
+        "rise_pct": 26.1,
+        "days_observed": 73,
+        "evidence_refs": [
+          "meter_15min:compressors:2026-07-20..2026-09-30:00-05h"
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "action": "Find and repair the leak on compressors",
+        "asset": "compressors",
+        "saving_kwh_per_year": [
+          77789,
+          96973
+        ],
+        "saving_money_per_year": [
+          663799,
+          827503
+        ],
+        "saving_co2e_t_per_year": [
+          31.1,
+          38.8
+        ],
+        "payback_months": [
+          0.3,
+          1.1
+        ],
+        "ease": "easy",
+        "rationale": "Night load on compressors rose 26.1% from 2026-07-20 and stayed up on idle days.",
+        "evidence_refs": [
+          "meter_15min:compressors:2026-07-20..2026-09-30:00-05h"
+        ],
+        "confidence": "medium",
+        "requires_approval": true,
+        "assumptions": [
+          "price 8.53 per kWh (current tariff, flat load)",
+          "emission factor 0.4 kg CO2e per kWh",
+          "repair cost 20000 to 60000 (assumed, not in data)"
+        ]
+      }
+    ],
+    "quality": {
+      "rows_in": 158054,
+      "duplicates_removed": 200,
+      "negative_readings": 1,
+      "missing_intervals": {
+        "compressors": 26,
+        "furnace": 28,
+        "hvac": 40,
+        "lighting": 26,
+        "line_1": 26,
+        "line_2": 28,
+        "line_3": 28,
+        "main": 29,
+        "utilities": 28
+      },
+      "filled_by_interpolation": 31,
+      "filled_by_typical_profile": 228,
+      "share_of_intervals_estimated": 0.00164,
+      "unmetered_share": 0.0253
+    },
+    "checks": [
+      {
+        "id": 1,
+        "check": "Sub-meters sum to main within tolerance",
+        "passed": true,
+        "detail": "sub-meters are 97.5% of main; unmetered remainder 2.5%"
+      },
+      {
+        "id": 2,
+        "check": "No negative energy; resets handled",
+        "passed": true,
+        "detail": "1 negative readings treated as meter resets and re-estimated"
+      },
+      {
+        "id": 3,
+        "check": "Timestamps regular and in one time zone",
+        "passed": true,
+        "detail": "0 off-grid timestamps; 258 missing meter intervals and 200 duplicate rows reported"
+      },
+      {
+        "id": 4,
+        "check": "Tariff periods do not overlap and cover the period",
+        "passed": true,
+        "detail": "4 tariff rows cover 2026-04-01 to 2026-09-30"
+      },
+      {
+        "id": 5,
+        "check": "Production days match the shift calendar",
+        "passed": false,
+        "detail": "1 day(s) logged as a shift with no output or on a holiday (2026-08-15); treated as non-working. "
+      },
+      {
+        "id": 6,
+        "check": "Row counts match the data card",
+        "passed": true,
+        "detail": "all tables match"
+      }
+    ]
+  },
+  "seed_2|ols|after_late_drop": {
+    "score": {
+      "total_true": 15.0534,
+      "total_est": 15.04,
+      "error_pp": {
+        "tariff": -0.01,
+        "volume": 0.1,
+        "product_mix": 0.04,
+        "weather": -0.01,
+        "waste": -0.12
+      },
+      "mae_pp": 0.06,
+      "max_abs_error_pp": 0.12,
+      "truth_in_range": {
+        "tariff": true,
+        "volume": true,
+        "product_mix": true,
+        "weather": true,
+        "waste": true
+      },
+      "reconciliation_gap_pp": 0.0,
+      "leak_recall": 1.0,
+      "false_leak_claims": [],
+      "r2": 0.9985,
+      "seconds": 1.07,
+      "saving_true_kwh": 87600.0,
+      "saving_range_kwh": [
+        77789,
+        96973
+      ],
+      "saving_in_range": true,
+      "leak_start_found": "2026-07-20",
+      "leak_start_true": "2026-07-20"
+    },
+    "bridge": {
+      "status": "ok",
+      "period": "2026-Q3",
+      "compare_to": "2026-Q2",
+      "bill_reference": 7554043.34,
+      "bill_current": 8690387.8,
+      "total_change_pct": 15.04,
+      "bridge": [
+        {
+          "cause": "tariff",
+          "pct_points": 7.44,
+          "range": [
+            7.44,
+            7.45
+          ],
+          "amount": 562619.13
+        },
+        {
+          "cause": "volume",
+          "pct_points": 2.39,
+          "range": [
+            2.25,
+            2.53
+          ],
+          "amount": 180229.65
+        },
+        {
+          "cause": "product_mix",
+          "pct_points": 2.39,
+          "range": [
+            2.21,
+            2.58
+          ],
+          "amount": 180505.86
+        },
+        {
+          "cause": "weather",
+          "pct_points": 1.24,
+          "range": [
+            1.15,
+            1.34
+          ],
+          "amount": 93958.2
+        },
+        {
+          "cause": "waste",
+          "pct_points": 1.58,
+          "range": [
+            1.31,
+            1.82
+          ],
+          "amount": 119031.63
+        }
+      ],
+      "baseline": {
+        "model": "ols",
+        "r2": 0.9985,
+        "coefficients": {
+          "work": 45684.1413,
+          "idle": 18417.3255,
+          "units_A": 9.5235,
+          "units_B": 15.4688,
+          "units_C": 28.0141,
+          "cdd": 952.5365
+        },
+        "target": "daily cost at reference-quarter prices",
+        "trained_on": "2026-Q2"
+      },
+      "assumptions": [
+        "reference-quarter tariff schedule is the 'old' price for every interval",
+        "calendar effect (number of working days) is counted in volume",
+        "ranges are the 5th to 95th percentile of 200 bootstrap refits of the baseline"
+      ]
+    },
+    "leaks": [
+      {
+        "asset": "compressors",
+        "pattern": "night load stepped up and stayed up",
+        "from": "2026-07-20",
+        "excess_kw": 9.97,
+        "excess_kw_range": [
+          8.88,
+          11.07
+        ],
+        "reference_night_kw": 38.23,
+        "rise_pct": 26.1,
+        "days_observed": 73,
+        "evidence_refs": [
+          "meter_15min:compressors:2026-07-20..2026-09-30:00-05h"
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "action": "Find and repair the leak on compressors",
+        "asset": "compressors",
+        "saving_kwh_per_year": [
+          77789,
+          96973
+        ],
+        "saving_money_per_year": [
+          648242,
+          808108
+        ],
+        "saving_co2e_t_per_year": [
+          31.1,
+          38.8
+        ],
+        "payback_months": [
+          0.3,
+          1.1
+        ],
+        "ease": "easy",
+        "rationale": "Night load on compressors rose 26.1% from 2026-07-20 and stayed up on idle days.",
+        "evidence_refs": [
+          "meter_15min:compressors:2026-07-20..2026-09-30:00-05h"
+        ],
+        "confidence": "medium",
+        "requires_approval": true,
+        "assumptions": [
+          "price 8.33 per kWh (current tariff, flat load)",
+          "emission factor 0.4 kg CO2e per kWh",
+          "repair cost 20000 to 60000 (assumed, not in data)"
+        ]
+      }
+    ],
+    "quality": {
+      "rows_in": 158059,
+      "duplicates_removed": 177,
+      "negative_readings": 1,
+      "missing_intervals": {
+        "compressors": 26,
+        "furnace": 28,
+        "hvac": 40,
+        "lighting": 26,
+        "line_1": 26,
+        "line_3": 28,
+        "main": 29,
+        "utilities": 28
+      },
+      "filled_by_interpolation": 27,
+      "filled_by_typical_profile": 204,
+      "share_of_intervals_estimated": 0.00146,
+      "unmetered_share": 0.0335
+    },
+    "checks": [
+      {
+        "id": 1,
+        "check": "Sub-meters sum to main within tolerance",
+        "passed": true,
+        "detail": "sub-meters are 96.6% of main; unmetered remainder 3.4%"
+      },
+      {
+        "id": 2,
+        "check": "No negative energy; resets handled",
+        "passed": true,
+        "detail": "1 negative readings treated as meter resets and re-estimated"
+      },
+      {
+        "id": 3,
+        "check": "Timestamps regular and in one time zone",
+        "passed": true,
+        "detail": "0 off-grid timestamps; 230 missing meter intervals and 177 duplicate rows reported"
+      },
+      {
+        "id": 4,
+        "check": "Tariff periods do not overlap and cover the period",
+        "passed": true,
+        "detail": "4 tariff rows cover 2026-04-01 to 2026-09-30"
+      },
+      {
+        "id": 5,
+        "check": "Production days match the shift calendar",
+        "passed": false,
+        "detail": "1 day(s) logged as a shift with no output or on a holiday (2026-08-15); treated as non-working. "
+      },
+      {
+        "id": 6,
+        "check": "Row counts match the data card",
+        "passed": false,
+        "detail": "mismatch (found, card): {'meter_15min': (158059, 158054)}"
+      }
+    ]
+  },
+  "seed_2|ridge|as_loaded": {
+    "score": {
+      "total_true": 15.5954,
+      "total_est": 15.58,
+      "error_pp": {
+        "tariff": -0.01,
+        "volume": -0.19,
+        "product_mix": -0.04,
+        "weather": -0.01,
+        "waste": 0.24
+      },
+      "mae_pp": 0.1,
+      "max_abs_error_pp": 0.24,
+      "truth_in_range": {
+        "tariff": true,
+        "volume": false,
+        "product_mix": true,
+        "weather": true,
+        "waste": true
+      },
+      "reconciliation_gap_pp": 0.0,
+      "leak_recall": 1.0,
+      "false_leak_claims": [],
+      "r2": 0.9981,
+      "seconds": 1.17,
+      "saving_true_kwh": 87600.0,
+      "saving_range_kwh": [
+        77789,
+        96973
+      ],
+      "saving_in_range": true,
+      "leak_start_found": "2026-07-20",
+      "leak_start_true": "2026-07-20"
+    },
+    "bridge": {
+      "status": "ok",
+      "period": "2026-Q3",
+      "compare_to": "2026-Q2",
+      "bill_reference": 7554043.34,
+      "bill_current": 8731328.31,
+      "total_change_pct": 15.58,
+      "bridge": [
+        {
+          "cause": "tariff",
+          "pct_points": 7.98,
+          "range": [
+            7.98,
+            7.99
+          ],
+          "amount": 603559.64
+        },
+        {
+          "cause": "volume",
+          "pct_points": 2.11,
+          "range": [
+            1.97,
+            2.23
+          ],
+          "amount": 159118.34
+        },
+        {
+          "cause": "product_mix",
+          "pct_points": 2.31,
+          "range": [
+            2.11,
+            2.52
+          ],
+          "amount": 174676.88
+        },
+        {
+          "cause": "weather",
+          "pct_points": 1.24,
+          "range": [
+            1.15,
+            1.33
+          ],
+          "amount": 93378.77
+        },
+        {
+          "cause": "waste",
+          "pct_points": 1.94,
+          "range": [
+            1.69,
+            2.26
+          ],
+          "amount": 146551.34
+        }
+      ],
+      "baseline": {
+        "model": "ridge",
+        "r2": 0.9981,
+        "coefficients": {
+          "work": 56491.0877,
+          "idle": 18449.3162,
+          "units_A": 6.094,
+          "units_B": 11.8566,
+          "units_C": 23.9906,
+          "cdd": 946.6623
+        },
+        "target": "daily cost at reference-quarter prices",
+        "trained_on": "2026-Q2"
+      },
+      "assumptions": [
+        "reference-quarter tariff schedule is the 'old' price for every interval",
+        "calendar effect (number of working days) is counted in volume",
+        "ranges are the 5th to 95th percentile of 200 bootstrap refits of the baseline"
+      ]
+    },
+    "leaks": [
+      {
+        "asset": "compressors",
+        "pattern": "night load stepped up and stayed up",
+        "from": "2026-07-20",
+        "excess_kw": 9.97,
+        "excess_kw_range": [
+          8.88,
+          11.07
+        ],
+        "reference_night_kw": 38.23,
+        "rise_pct": 26.1,
+        "days_observed": 73,
+        "evidence_refs": [
+          "meter_15min:compressors:2026-07-20..2026-09-30:00-05h"
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "action": "Find and repair the leak on compressors",
+        "asset": "compressors",
+        "saving_kwh_per_year": [
+          77789,
+          96973
+        ],
+        "saving_money_per_year": [
+          663799,
+          827503
+        ],
+        "saving_co2e_t_per_year": [
+          31.1,
+          38.8
+        ],
+        "payback_months": [
+          0.3,
+          1.1
+        ],
+        "ease": "easy",
+        "rationale": "Night load on compressors rose 26.1% from 2026-07-20 and stayed up on idle days.",
+        "evidence_refs": [
+          "meter_15min:compressors:2026-07-20..2026-09-30:00-05h"
+        ],
+        "confidence": "medium",
+        "requires_approval": true,
+        "assumptions": [
+          "price 8.53 per kWh (current tariff, flat load)",
+          "emission factor 0.4 kg CO2e per kWh",
+          "repair cost 20000 to 60000 (assumed, not in data)"
+        ]
+      }
+    ],
+    "quality": {
+      "rows_in": 158054,
+      "duplicates_removed": 200,
+      "negative_readings": 1,
+      "missing_intervals": {
+        "compressors": 26,
+        "furnace": 28,
+        "hvac": 40,
+        "lighting": 26,
+        "line_1": 26,
+        "line_2": 28,
+        "line_3": 28,
+        "main": 29,
+        "utilities": 28
+      },
+      "filled_by_interpolation": 31,
+      "filled_by_typical_profile": 228,
+      "share_of_intervals_estimated": 0.00164,
+      "unmetered_share": 0.0253
+    },
+    "checks": [
+      {
+        "id": 1,
+        "check": "Sub-meters sum to main within tolerance",
+        "passed": true,
+        "detail": "sub-meters are 97.5% of main; unmetered remainder 2.5%"
+      },
+      {
+        "id": 2,
+        "check": "No negative energy; resets handled",
+        "passed": true,
+        "detail": "1 negative readings treated as meter resets and re-estimated"
+      },
+      {
+        "id": 3,
+        "check": "Timestamps regular and in one time zone",
+        "passed": true,
+        "detail": "0 off-grid timestamps; 258 missing meter intervals and 200 duplicate rows reported"
+      },
+      {
+        "id": 4,
+        "check": "Tariff periods do not overlap and cover the period",
+        "passed": true,
+        "detail": "4 tariff rows cover 2026-04-01 to 2026-09-30"
+      },
+      {
+        "id": 5,
+        "check": "Production days match the shift calendar",
+        "passed": false,
+        "detail": "1 day(s) logged as a shift with no output or on a holiday (2026-08-15); treated as non-working. "
+      },
+      {
+        "id": 6,
+        "check": "Row counts match the data card",
+        "passed": true,
+        "detail": "all tables match"
+      }
+    ]
+  },
+  "seed_2|ridge|after_late_drop": {
+    "score": {
+      "total_true": 15.0534,
+      "total_est": 15.04,
+      "error_pp": {
+        "tariff": -0.01,
+        "volume": -0.19,
+        "product_mix": -0.04,
+        "weather": -0.01,
+        "waste": 0.24
+      },
+      "mae_pp": 0.1,
+      "max_abs_error_pp": 0.24,
+      "truth_in_range": {
+        "tariff": true,
+        "volume": false,
+        "product_mix": true,
+        "weather": true,
+        "waste": true
+      },
+      "reconciliation_gap_pp": 0.0,
+      "leak_recall": 1.0,
+      "false_leak_claims": [],
+      "r2": 0.9981,
+      "seconds": 1.16,
+      "saving_true_kwh": 87600.0,
+      "saving_range_kwh": [
+        77789,
+        96973
+      ],
+      "saving_in_range": true,
+      "leak_start_found": "2026-07-20",
+      "leak_start_true": "2026-07-20"
+    },
+    "bridge": {
+      "status": "ok",
+      "period": "2026-Q3",
+      "compare_to": "2026-Q2",
+      "bill_reference": 7554043.34,
+      "bill_current": 8690387.8,
+      "total_change_pct": 15.04,
+      "bridge": [
+        {
+          "cause": "tariff",
+          "pct_points": 7.44,
+          "range": [
+            7.44,
+            7.45
+          ],
+          "amount": 562619.13
+        },
+        {
+          "cause": "volume",
+          "pct_points": 2.11,
+          "range": [
+            1.97,
+            2.23
+          ],
+          "amount": 159118.34
+        },
+        {
+          "cause": "product_mix",
+          "pct_points": 2.31,
+          "range": [
+            2.11,
+            2.52
+          ],
+          "amount": 174676.88
+        },
+        {
+          "cause": "weather",
+          "pct_points": 1.24,
+          "range": [
+            1.15,
+            1.33
+          ],
+          "amount": 93378.77
+        },
+        {
+          "cause": "waste",
+          "pct_points": 1.94,
+          "range": [
+            1.69,
+            2.26
+          ],
+          "amount": 146551.34
+        }
+      ],
+      "baseline": {
+        "model": "ridge",
+        "r2": 0.9981,
+        "coefficients": {
+          "work": 56491.0877,
+          "idle": 18449.3162,
+          "units_A": 6.094,
+          "units_B": 11.8566,
+          "units_C": 23.9906,
+          "cdd": 946.6623
+        },
+        "target": "daily cost at reference-quarter prices",
+        "trained_on": "2026-Q2"
+      },
+      "assumptions": [
+        "reference-quarter tariff schedule is the 'old' price for every interval",
+        "calendar effect (number of working days) is counted in volume",
+        "ranges are the 5th to 95th percentile of 200 bootstrap refits of the baseline"
+      ]
+    },
+    "leaks": [
+      {
+        "asset": "compressors",
+        "pattern": "night load stepped up and stayed up",
+        "from": "2026-07-20",
+        "excess_kw": 9.97,
+        "excess_kw_range": [
+          8.88,
+          11.07
+        ],
+        "reference_night_kw": 38.23,
+        "rise_pct": 26.1,
+        "days_observed": 73,
+        "evidence_refs": [
+          "meter_15min:compressors:2026-07-20..2026-09-30:00-05h"
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "action": "Find and repair the leak on compressors",
+        "asset": "compressors",
+        "saving_kwh_per_year": [
+          77789,
+          96973
+        ],
+        "saving_money_per_year": [
+          648242,
+          808108
+        ],
+        "saving_co2e_t_per_year": [
+          31.1,
+          38.8
+        ],
+        "payback_months": [
+          0.3,
+          1.1
+        ],
+        "ease": "easy",
+        "rationale": "Night load on compressors rose 26.1% from 2026-07-20 and stayed up on idle days.",
+        "evidence_refs": [
+          "meter_15min:compressors:2026-07-20..2026-09-30:00-05h"
+        ],
+        "confidence": "medium",
+        "requires_approval": true,
+        "assumptions": [
+          "price 8.33 per kWh (current tariff, flat load)",
+          "emission factor 0.4 kg CO2e per kWh",
+          "repair cost 20000 to 60000 (assumed, not in data)"
+        ]
+      }
+    ],
+    "quality": {
+      "rows_in": 158059,
+      "duplicates_removed": 177,
+      "negative_readings": 1,
+      "missing_intervals": {
+        "compressors": 26,
+        "furnace": 28,
+        "hvac": 40,
+        "lighting": 26,
+        "line_1": 26,
+        "line_3": 28,
+        "main": 29,
+        "utilities": 28
+      },
+      "filled_by_interpolation": 27,
+      "filled_by_typical_profile": 204,
+      "share_of_intervals_estimated": 0.00146,
+      "unmetered_share": 0.0335
+    },
+    "checks": [
+      {
+        "id": 1,
+        "check": "Sub-meters sum to main within tolerance",
+        "passed": true,
+        "detail": "sub-meters are 96.6% of main; unmetered remainder 3.4%"
+      },
+      {
+        "id": 2,
+        "check": "No negative energy; resets handled",
+        "passed": true,
+        "detail": "1 negative readings treated as meter resets and re-estimated"
+      },
+      {
+        "id": 3,
+        "check": "Timestamps regular and in one time zone",
+        "passed": true,
+        "detail": "0 off-grid timestamps; 230 missing meter intervals and 177 duplicate rows reported"
+      },
+      {
+        "id": 4,
+        "check": "Tariff periods do not overlap and cover the period",
+        "passed": true,
+        "detail": "4 tariff rows cover 2026-04-01 to 2026-09-30"
+      },
+      {
+        "id": 5,
+        "check": "Production days match the shift calendar",
+        "passed": false,
+        "detail": "1 day(s) logged as a shift with no output or on a holiday (2026-08-15); treated as non-working. "
+      },
+      {
+        "id": 6,
+        "check": "Row counts match the data card",
+        "passed": false,
+        "detail": "mismatch (found, card): {'meter_15min': (158059, 158054)}"
+      }
+    ]
+  },
+  "seed_3|ols|as_loaded": {
+    "score": {
+      "total_true": 16.0329,
+      "total_est": 16.02,
+      "error_pp": {
+        "tariff": 0.01,
+        "volume": -0.03,
+        "product_mix": 0.04,
+        "weather": -0.06,
+        "waste": 0.03
+      },
+      "mae_pp": 0.03,
+      "max_abs_error_pp": 0.06,
+      "truth_in_range": {
+        "tariff": true,
+        "volume": true,
+        "product_mix": true,
+        "weather": true,
+        "waste": true
+      },
+      "reconciliation_gap_pp": 0.0,
+      "leak_recall": 1.0,
+      "false_leak_claims": [],
+      "r2": 0.9989,
+      "seconds": 1.12,
+      "saving_true_kwh": 87600.0,
+      "saving_range_kwh": [
+        77876,
+        97411
+      ],
+      "saving_in_range": true,
+      "leak_start_found": "2026-07-20",
+      "leak_start_true": "2026-07-20"
+    },
+    "bridge": {
+      "status": "ok",
+      "period": "2026-Q3",
+      "compare_to": "2026-Q2",
+      "bill_reference": 7617935.29,
+      "bill_current": 8838029.47,
+      "total_change_pct": 16.02,
+      "bridge": [
+        {
+          "cause": "tariff",
+          "pct_points": 8.05,
+          "range": [
+            8.04,
+            8.05
+          ],
+          "amount": 612659.17
+        },
+        {
+          "cause": "volume",
+          "pct_points": 3.48,
+          "range": [
+            3.34,
+            3.65
+          ],
+          "amount": 265193.19
+        },
+        {
+          "cause": "product_mix",
+          "pct_points": 1.83,
+          "range": [
+            1.65,
+            1.99
+          ],
+          "amount": 139686.71
+        },
+        {
+          "cause": "weather",
+          "pct_points": 0.94,
+          "range": [
+            0.86,
+            1.02
+          ],
+          "amount": 71616.75
+        },
+        {
+          "cause": "waste",
+          "pct_points": 1.72,
+          "range": [
+            1.51,
+            1.92
+          ],
+          "amount": 130938.36
+        }
+      ],
+      "baseline": {
+        "model": "ols",
+        "r2": 0.9989,
+        "coefficients": {
+          "work": 40862.8717,
+          "idle": 18730.9205,
+          "units_A": 10.9838,
+          "units_B": 17.4409,
+          "units_C": 29.8332,
+          "cdd": 902.8839
+        },
+        "target": "daily cost at reference-quarter prices",
+        "trained_on": "2026-Q2"
+      },
+      "assumptions": [
+        "reference-quarter tariff schedule is the 'old' price for every interval",
+        "calendar effect (number of working days) is counted in volume",
+        "ranges are the 5th to 95th percentile of 200 bootstrap refits of the baseline"
+      ]
+    },
+    "leaks": [
+      {
+        "asset": "compressors",
+        "pattern": "night load stepped up and stayed up",
+        "from": "2026-07-20",
+        "excess_kw": 9.99,
+        "excess_kw_range": [
+          8.89,
+          11.12
+        ],
+        "reference_night_kw": 38.26,
+        "rise_pct": 26.1,
+        "days_observed": 73,
+        "evidence_refs": [
+          "meter_15min:compressors:2026-07-20..2026-09-30:00-05h"
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "action": "Find and repair the leak on compressors",
+        "asset": "compressors",
+        "saving_kwh_per_year": [
+          77876,
+          97411
+        ],
+        "saving_money_per_year": [
+          664542,
+          831241
+        ],
+        "saving_co2e_t_per_year": [
+          31.2,
+          39.0
+        ],
+        "payback_months": [
+          0.3,
+          1.1
+        ],
+        "ease": "easy",
+        "rationale": "Night load on compressors rose 26.1% from 2026-07-20 and stayed up on idle days.",
+        "evidence_refs": [
+          "meter_15min:compressors:2026-07-20..2026-09-30:00-05h"
+        ],
+        "confidence": "medium",
+        "requires_approval": true,
+        "assumptions": [
+          "price 8.53 per kWh (current tariff, flat load)",
+          "emission factor 0.4 kg CO2e per kWh",
+          "repair cost 20000 to 60000 (assumed, not in data)"
+        ]
+      }
+    ],
+    "quality": {
+      "rows_in": 158054,
+      "duplicates_removed": 200,
+      "negative_readings": 1,
+      "missing_intervals": {
+        "compressors": 27,
+        "furnace": 33,
+        "hvac": 41,
+        "lighting": 25,
+        "line_1": 28,
+        "line_2": 26,
+        "line_3": 25,
+        "main": 26,
+        "utilities": 28
+      },
+      "filled_by_interpolation": 31,
+      "filled_by_typical_profile": 228,
+      "share_of_intervals_estimated": 0.00164,
+      "unmetered_share": 0.0251
+    },
+    "checks": [
+      {
+        "id": 1,
+        "check": "Sub-meters sum to main within tolerance",
+        "passed": true,
+        "detail": "sub-meters are 97.5% of main; unmetered remainder 2.5%"
+      },
+      {
+        "id": 2,
+        "check": "No negative energy; resets handled",
+        "passed": true,
+        "detail": "1 negative readings treated as meter resets and re-estimated"
+      },
+      {
+        "id": 3,
+        "check": "Timestamps regular and in one time zone",
+        "passed": true,
+        "detail": "0 off-grid timestamps; 258 missing meter intervals and 200 duplicate rows reported"
+      },
+      {
+        "id": 4,
+        "check": "Tariff periods do not overlap and cover the period",
+        "passed": true,
+        "detail": "4 tariff rows cover 2026-04-01 to 2026-09-30"
+      },
+      {
+        "id": 5,
+        "check": "Production days match the shift calendar",
+        "passed": false,
+        "detail": "1 day(s) logged as a shift with no output or on a holiday (2026-08-15); treated as non-working. "
+      },
+      {
+        "id": 6,
+        "check": "Row counts match the data card",
+        "passed": true,
+        "detail": "all tables match"
+      }
+    ]
+  },
+  "seed_3|ols|after_late_drop": {
+    "score": {
+      "total_true": 15.4942,
+      "total_est": 15.48,
+      "error_pp": {
+        "tariff": 0.01,
+        "volume": -0.03,
+        "product_mix": 0.04,
+        "weather": -0.06,
+        "waste": 0.03
+      },
+      "mae_pp": 0.03,
+      "max_abs_error_pp": 0.06,
+      "truth_in_range": {
+        "tariff": true,
+        "volume": true,
+        "product_mix": true,
+        "weather": true,
+        "waste": true
+      },
+      "reconciliation_gap_pp": 0.0,
+      "leak_recall": 1.0,
+      "false_leak_claims": [],
+      "r2": 0.9989,
+      "seconds": 1.47,
+      "saving_true_kwh": 87600.0,
+      "saving_range_kwh": [
+        77876,
+        97411
+      ],
+      "saving_in_range": true,
+      "leak_start_found": "2026-07-20",
+      "leak_start_true": "2026-07-20"
+    },
+    "bridge": {
+      "status": "ok",
+      "period": "2026-Q3",
+      "compare_to": "2026-Q2",
+      "bill_reference": 7617935.29,
+      "bill_current": 8796997.99,
+      "total_change_pct": 15.48,
+      "bridge": [
+        {
+          "cause": "tariff",
+          "pct_points": 7.51,
+          "range": [
+            7.5,
+            7.51
+          ],
+          "amount": 571627.69
+        },
+        {
+          "cause": "volume",
+          "pct_points": 3.48,
+          "range": [
+            3.34,
+            3.65
+          ],
+          "amount": 265193.19
+        },
+        {
+          "cause": "product_mix",
+          "pct_points": 1.83,
+          "range": [
+            1.65,
+            1.99
+          ],
+          "amount": 139686.71
+        },
+        {
+          "cause": "weather",
+          "pct_points": 0.94,
+          "range": [
+            0.86,
+            1.02
+          ],
+          "amount": 71616.75
+        },
+        {
+          "cause": "waste",
+          "pct_points": 1.72,
+          "range": [
+            1.51,
+            1.92
+          ],
+          "amount": 130938.36
+        }
+      ],
+      "baseline": {
+        "model": "ols",
+        "r2": 0.9989,
+        "coefficients": {
+          "work": 40862.8717,
+          "idle": 18730.9205,
+          "units_A": 10.9838,
+          "units_B": 17.4409,
+          "units_C": 29.8332,
+          "cdd": 902.8839
+        },
+        "target": "daily cost at reference-quarter prices",
+        "trained_on": "2026-Q2"
+      },
+      "assumptions": [
+        "reference-quarter tariff schedule is the 'old' price for every interval",
+        "calendar effect (number of working days) is counted in volume",
+        "ranges are the 5th to 95th percentile of 200 bootstrap refits of the baseline"
+      ]
+    },
+    "leaks": [
+      {
+        "asset": "compressors",
+        "pattern": "night load stepped up and stayed up",
+        "from": "2026-07-20",
+        "excess_kw": 9.99,
+        "excess_kw_range": [
+          8.89,
+          11.12
+        ],
+        "reference_night_kw": 38.26,
+        "rise_pct": 26.1,
+        "days_observed": 73,
+        "evidence_refs": [
+          "meter_15min:compressors:2026-07-20..2026-09-30:00-05h"
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "action": "Find and repair the leak on compressors",
+        "asset": "compressors",
+        "saving_kwh_per_year": [
+          77876,
+          97411
+        ],
+        "saving_money_per_year": [
+          648967,
+          811758
+        ],
+        "saving_co2e_t_per_year": [
+          31.2,
+          39.0
+        ],
+        "payback_months": [
+          0.3,
+          1.1
+        ],
+        "ease": "easy",
+        "rationale": "Night load on compressors rose 26.1% from 2026-07-20 and stayed up on idle days.",
+        "evidence_refs": [
+          "meter_15min:compressors:2026-07-20..2026-09-30:00-05h"
+        ],
+        "confidence": "medium",
+        "requires_approval": true,
+        "assumptions": [
+          "price 8.33 per kWh (current tariff, flat load)",
+          "emission factor 0.4 kg CO2e per kWh",
+          "repair cost 20000 to 60000 (assumed, not in data)"
+        ]
+      }
+    ],
+    "quality": {
+      "rows_in": 158056,
+      "duplicates_removed": 176,
+      "negative_readings": 1,
+      "missing_intervals": {
+        "compressors": 27,
+        "furnace": 33,
+        "hvac": 41,
+        "lighting": 25,
+        "line_1": 28,
+        "line_3": 25,
+        "main": 26,
+        "utilities": 28
+      },
+      "filled_by_interpolation": 29,
+      "filled_by_typical_profile": 204,
+      "share_of_intervals_estimated": 0.00147,
+      "unmetered_share": 0.0334
+    },
+    "checks": [
+      {
+        "id": 1,
+        "check": "Sub-meters sum to main within tolerance",
+        "passed": true,
+        "detail": "sub-meters are 96.7% of main; unmetered remainder 3.3%"
+      },
+      {
+        "id": 2,
+        "check": "No negative energy; resets handled",
+        "passed": true,
+        "detail": "1 negative readings treated as meter resets and re-estimated"
+      },
+      {
+        "id": 3,
+        "check": "Timestamps regular and in one time zone",
+        "passed": true,
+        "detail": "0 off-grid timestamps; 232 missing meter intervals and 176 duplicate rows reported"
+      },
+      {
+        "id": 4,
+        "check": "Tariff periods do not overlap and cover the period",
+        "passed": true,
+        "detail": "4 tariff rows cover 2026-04-01 to 2026-09-30"
+      },
+      {
+        "id": 5,
+        "check": "Production days match the shift calendar",
+        "passed": false,
+        "detail": "1 day(s) logged as a shift with no output or on a holiday (2026-08-15); treated as non-working. "
+      },
+      {
+        "id": 6,
+        "check": "Row counts match the data card",
+        "passed": false,
+        "detail": "mismatch (found, card): {'meter_15min': (158056, 158054)}"
+      }
+    ]
+  },
+  "seed_3|ridge|as_loaded": {
+    "score": {
+      "total_true": 16.0329,
+      "total_est": 16.02,
+      "error_pp": {
+        "tariff": -0.0,
+        "volume": -0.46,
+        "product_mix": -0.01,
+        "weather": -0.06,
+        "waste": 0.52
+      },
+      "mae_pp": 0.21,
+      "max_abs_error_pp": 0.52,
+      "truth_in_range": {
+        "tariff": true,
+        "volume": false,
+        "product_mix": true,
+        "weather": true,
+        "waste": false
+      },
+      "reconciliation_gap_pp": 0.0,
+      "leak_recall": 1.0,
+      "false_leak_claims": [],
+      "r2": 0.9986,
+      "seconds": 1.23,
+      "saving_true_kwh": 87600.0,
+      "saving_range_kwh": [
+        77876,
+        97411
+      ],
+      "saving_in_range": true,
+      "leak_start_found": "2026-07-20",
+      "leak_start_true": "2026-07-20"
+    },
+    "bridge": {
+      "status": "ok",
+      "period": "2026-Q3",
+      "compare_to": "2026-Q2",
+      "bill_reference": 7617935.29,
+      "bill_current": 8838029.47,
+      "total_change_pct": 16.02,
+      "bridge": [
+        {
+          "cause": "tariff",
+          "pct_points": 8.04,
+          "range": [
+            8.04,
+            8.04
+          ],
+          "amount": 612659.17
+        },
+        {
+          "cause": "volume",
+          "pct_points": 3.05,
+          "range": [
+            2.84,
+            3.2
+          ],
+          "amount": 232567.67
+        },
+        {
+          "cause": "product_mix",
+          "pct_points": 1.78,
+          "range": [
+            1.6,
+            1.94
+          ],
+          "amount": 135407.34
+        },
+        {
+          "cause": "weather",
+          "pct_points": 0.94,
+          "range": [
+            0.85,
+            1.04
+          ],
+          "amount": 71388.88
+        },
+        {
+          "cause": "waste",
+          "pct_points": 2.21,
+          "range": [
+            2.02,
+            2.53
+          ],
+          "amount": 168071.11
+        }
+      ],
+      "baseline": {
+        "model": "ridge",
+        "r2": 0.9986,
+        "coefficients": {
+          "work": 50409.1195,
+          "idle": 18745.9241,
+          "units_A": 8.0099,
+          "units_B": 14.0226,
+          "units_C": 26.4216,
+          "cdd": 900.0111
+        },
+        "target": "daily cost at reference-quarter prices",
+        "trained_on": "2026-Q2"
+      },
+      "assumptions": [
+        "reference-quarter tariff schedule is the 'old' price for every interval",
+        "calendar effect (number of working days) is counted in volume",
+        "ranges are the 5th to 95th percentile of 200 bootstrap refits of the baseline"
+      ]
+    },
+    "leaks": [
+      {
+        "asset": "compressors",
+        "pattern": "night load stepped up and stayed up",
+        "from": "2026-07-20",
+        "excess_kw": 9.99,
+        "excess_kw_range": [
+          8.89,
+          11.12
+        ],
+        "reference_night_kw": 38.26,
+        "rise_pct": 26.1,
+        "days_observed": 73,
+        "evidence_refs": [
+          "meter_15min:compressors:2026-07-20..2026-09-30:00-05h"
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "action": "Find and repair the leak on compressors",
+        "asset": "compressors",
+        "saving_kwh_per_year": [
+          77876,
+          97411
+        ],
+        "saving_money_per_year": [
+          664542,
+          831241
+        ],
+        "saving_co2e_t_per_year": [
+          31.2,
+          39.0
+        ],
+        "payback_months": [
+          0.3,
+          1.1
+        ],
+        "ease": "easy",
+        "rationale": "Night load on compressors rose 26.1% from 2026-07-20 and stayed up on idle days.",
+        "evidence_refs": [
+          "meter_15min:compressors:2026-07-20..2026-09-30:00-05h"
+        ],
+        "confidence": "medium",
+        "requires_approval": true,
+        "assumptions": [
+          "price 8.53 per kWh (current tariff, flat load)",
+          "emission factor 0.4 kg CO2e per kWh",
+          "repair cost 20000 to 60000 (assumed, not in data)"
+        ]
+      }
+    ],
+    "quality": {
+      "rows_in": 158054,
+      "duplicates_removed": 200,
+      "negative_readings": 1,
+      "missing_intervals": {
+        "compressors": 27,
+        "furnace": 33,
+        "hvac": 41,
+        "lighting": 25,
+        "line_1": 28,
+        "line_2": 26,
+        "line_3": 25,
+        "main": 26,
+        "utilities": 28
+      },
+      "filled_by_interpolation": 31,
+      "filled_by_typical_profile": 228,
+      "share_of_intervals_estimated": 0.00164,
+      "unmetered_share": 0.0251
+    },
+    "checks": [
+      {
+        "id": 1,
+        "check": "Sub-meters sum to main within tolerance",
+        "passed": true,
+        "detail": "sub-meters are 97.5% of main; unmetered remainder 2.5%"
+      },
+      {
+        "id": 2,
+        "check": "No negative energy; resets handled",
+        "passed": true,
+        "detail": "1 negative readings treated as meter resets and re-estimated"
+      },
+      {
+        "id": 3,
+        "check": "Timestamps regular and in one time zone",
+        "passed": true,
+        "detail": "0 off-grid timestamps; 258 missing meter intervals and 200 duplicate rows reported"
+      },
+      {
+        "id": 4,
+        "check": "Tariff periods do not overlap and cover the period",
+        "passed": true,
+        "detail": "4 tariff rows cover 2026-04-01 to 2026-09-30"
+      },
+      {
+        "id": 5,
+        "check": "Production days match the shift calendar",
+        "passed": false,
+        "detail": "1 day(s) logged as a shift with no output or on a holiday (2026-08-15); treated as non-working. "
+      },
+      {
+        "id": 6,
+        "check": "Row counts match the data card",
+        "passed": true,
+        "detail": "all tables match"
+      }
+    ]
+  },
+  "seed_3|ridge|after_late_drop": {
+    "score": {
+      "total_true": 15.4942,
+      "total_est": 15.48,
+      "error_pp": {
+        "tariff": -0.0,
+        "volume": -0.46,
+        "product_mix": -0.01,
+        "weather": -0.06,
+        "waste": 0.52
+      },
+      "mae_pp": 0.21,
+      "max_abs_error_pp": 0.52,
+      "truth_in_range": {
+        "tariff": true,
+        "volume": false,
+        "product_mix": true,
+        "weather": true,
+        "waste": false
+      },
+      "reconciliation_gap_pp": 0.0,
+      "leak_recall": 1.0,
+      "false_leak_claims": [],
+      "r2": 0.9986,
+      "seconds": 1.24,
+      "saving_true_kwh": 87600.0,
+      "saving_range_kwh": [
+        77876,
+        97411
+      ],
+      "saving_in_range": true,
+      "leak_start_found": "2026-07-20",
+      "leak_start_true": "2026-07-20"
+    },
+    "bridge": {
+      "status": "ok",
+      "period": "2026-Q3",
+      "compare_to": "2026-Q2",
+      "bill_reference": 7617935.29,
+      "bill_current": 8796997.99,
+      "total_change_pct": 15.48,
+      "bridge": [
+        {
+          "cause": "tariff",
+          "pct_points": 7.5,
+          "range": [
+            7.5,
+            7.5
+          ],
+          "amount": 571627.69
+        },
+        {
+          "cause": "volume",
+          "pct_points": 3.05,
+          "range": [
+            2.84,
+            3.2
+          ],
+          "amount": 232567.67
+        },
+        {
+          "cause": "product_mix",
+          "pct_points": 1.78,
+          "range": [
+            1.6,
+            1.94
+          ],
+          "amount": 135407.34
+        },
+        {
+          "cause": "weather",
+          "pct_points": 0.94,
+          "range": [
+            0.85,
+            1.04
+          ],
+          "amount": 71388.88
+        },
+        {
+          "cause": "waste",
+          "pct_points": 2.21,
+          "range": [
+            2.02,
+            2.53
+          ],
+          "amount": 168071.11
+        }
+      ],
+      "baseline": {
+        "model": "ridge",
+        "r2": 0.9986,
+        "coefficients": {
+          "work": 50409.1195,
+          "idle": 18745.9241,
+          "units_A": 8.0099,
+          "units_B": 14.0226,
+          "units_C": 26.4216,
+          "cdd": 900.0111
+        },
+        "target": "daily cost at reference-quarter prices",
+        "trained_on": "2026-Q2"
+      },
+      "assumptions": [
+        "reference-quarter tariff schedule is the 'old' price for every interval",
+        "calendar effect (number of working days) is counted in volume",
+        "ranges are the 5th to 95th percentile of 200 bootstrap refits of the baseline"
+      ]
+    },
+    "leaks": [
+      {
+        "asset": "compressors",
+        "pattern": "night load stepped up and stayed up",
+        "from": "2026-07-20",
+        "excess_kw": 9.99,
+        "excess_kw_range": [
+          8.89,
+          11.12
+        ],
+        "reference_night_kw": 38.26,
+        "rise_pct": 26.1,
+        "days_observed": 73,
+        "evidence_refs": [
+          "meter_15min:compressors:2026-07-20..2026-09-30:00-05h"
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "action": "Find and repair the leak on compressors",
+        "asset": "compressors",
+        "saving_kwh_per_year": [
+          77876,
+          97411
+        ],
+        "saving_money_per_year": [
+          648967,
+          811758
+        ],
+        "saving_co2e_t_per_year": [
+          31.2,
+          39.0
+        ],
+        "payback_months": [
+          0.3,
+          1.1
+        ],
+        "ease": "easy",
+        "rationale": "Night load on compressors rose 26.1% from 2026-07-20 and stayed up on idle days.",
+        "evidence_refs": [
+          "meter_15min:compressors:2026-07-20..2026-09-30:00-05h"
+        ],
+        "confidence": "medium",
+        "requires_approval": true,
+        "assumptions": [
+          "price 8.33 per kWh (current tariff, flat load)",
+          "emission factor 0.4 kg CO2e per kWh",
+          "repair cost 20000 to 60000 (assumed, not in data)"
+        ]
+      }
+    ],
+    "quality": {
+      "rows_in": 158056,
+      "duplicates_removed": 176,
+      "negative_readings": 1,
+      "missing_intervals": {
+        "compressors": 27,
+        "furnace": 33,
+        "hvac": 41,
+        "lighting": 25,
+        "line_1": 28,
+        "line_3": 25,
+        "main": 26,
+        "utilities": 28
+      },
+      "filled_by_interpolation": 29,
+      "filled_by_typical_profile": 204,
+      "share_of_intervals_estimated": 0.00147,
+      "unmetered_share": 0.0334
+    },
+    "checks": [
+      {
+        "id": 1,
+        "check": "Sub-meters sum to main within tolerance",
+        "passed": true,
+        "detail": "sub-meters are 96.7% of main; unmetered remainder 3.3%"
+      },
+      {
+        "id": 2,
+        "check": "No negative energy; resets handled",
+        "passed": true,
+        "detail": "1 negative readings treated as meter resets and re-estimated"
+      },
+      {
+        "id": 3,
+        "check": "Timestamps regular and in one time zone",
+        "passed": true,
+        "detail": "0 off-grid timestamps; 232 missing meter intervals and 176 duplicate rows reported"
+      },
+      {
+        "id": 4,
+        "check": "Tariff periods do not overlap and cover the period",
+        "passed": true,
+        "detail": "4 tariff rows cover 2026-04-01 to 2026-09-30"
+      },
+      {
+        "id": 5,
+        "check": "Production days match the shift calendar",
+        "passed": false,
+        "detail": "1 day(s) logged as a shift with no output or on a holiday (2026-08-15); treated as non-working. "
+      },
+      {
+        "id": 6,
+        "check": "Row counts match the data card",
+        "passed": false,
+        "detail": "mismatch (found, card): {'meter_15min': (158056, 158054)}"
+      }
+    ]
+  },
+  "stress|ols|as_loaded": {
+    "score": {
+      "total_true": 15.9418,
+      "total_est": 15.95,
+      "error_pp": {
+        "tariff": -0.0,
+        "volume": 0.34,
+        "product_mix": 0.19,
+        "weather": -0.31,
+        "waste": -0.21
+      },
+      "mae_pp": 0.21,
+      "max_abs_error_pp": 0.34,
+      "truth_in_range": {
+        "tariff": true,
+        "volume": false,
+        "product_mix": true,
+        "weather": false,
+        "waste": true
+      },
+      "reconciliation_gap_pp": 0.0,
+      "leak_recall": 1.0,
+      "false_leak_claims": [],
+      "r2": 0.998,
+      "seconds": 1.35,
+      "saving_true_kwh": 87600.0,
+      "saving_range_kwh": [
+        76913,
+        95922
+      ],
+      "saving_in_range": true,
+      "leak_start_found": "2026-07-20",
+      "leak_start_true": "2026-07-20"
+    },
+    "bridge": {
+      "status": "ok",
+      "period": "2026-Q3",
+      "compare_to": "2026-Q2",
+      "bill_reference": 7788658.87,
+      "bill_current": 9030695.65,
+      "total_change_pct": 15.95,
+      "bridge": [
+        {
+          "cause": "tariff",
+          "pct_points": 8.01,
+          "range": [
+            8.01,
+            8.01
+          ],
+          "amount": 624199.74
+        },
+        {
+          "cause": "volume",
+          "pct_points": 2.64,
+          "range": [
+            2.43,
+            2.81
+          ],
+          "amount": 205412.0
+        },
+        {
+          "cause": "product_mix",
+          "pct_points": 1.93,
+          "range": [
+            1.74,
+            2.08
+          ],
+          "amount": 150035.79
+        },
+        {
+          "cause": "weather",
+          "pct_points": 1.93,
+          "range": [
+            1.84,
+            2.05
+          ],
+          "amount": 150419.5
+        },
+        {
+          "cause": "waste",
+          "pct_points": 1.44,
+          "range": [
+            1.19,
+            1.73
+          ],
+          "amount": 111969.75
+        }
+      ],
+      "baseline": {
+        "model": "ols",
+        "r2": 0.998,
+        "coefficients": {
+          "work": 42043.4955,
+          "idle": 17071.9128,
+          "units_A": 9.7089,
+          "units_B": 16.4839,
+          "units_C": 29.9549,
+          "cdd": 1524.1615
+        },
+        "target": "daily cost at reference-quarter prices",
+        "trained_on": "2026-Q2"
+      },
+      "assumptions": [
+        "reference-quarter tariff schedule is the 'old' price for every interval",
+        "calendar effect (number of working days) is counted in volume",
+        "ranges are the 5th to 95th percentile of 200 bootstrap refits of the baseline"
+      ]
+    },
+    "leaks": [
+      {
+        "asset": "compressors",
+        "pattern": "night load stepped up and stayed up",
+        "from": "2026-07-20",
+        "excess_kw": 9.85,
+        "excess_kw_range": [
+          8.78,
+          10.95
+        ],
+        "reference_night_kw": 38.3,
+        "rise_pct": 25.7,
+        "days_observed": 73,
+        "evidence_refs": [
+          "meter_15min:compressors:2026-07-20..2026-09-30:00-05h"
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "action": "Find and repair the leak on compressors",
+        "asset": "compressors",
+        "saving_kwh_per_year": [
+          76913,
+          95922
+        ],
+        "saving_money_per_year": [
+          656324,
+          818534
+        ],
+        "saving_co2e_t_per_year": [
+          30.8,
+          38.4
+        ],
+        "payback_months": [
+          0.3,
+          1.1
+        ],
+        "ease": "easy",
+        "rationale": "Night load on compressors rose 25.7% from 2026-07-20 and stayed up on idle days.",
+        "evidence_refs": [
+          "meter_15min:compressors:2026-07-20..2026-09-30:00-05h"
+        ],
+        "confidence": "medium",
+        "requires_approval": true,
+        "assumptions": [
+          "price 8.53 per kWh (current tariff, flat load)",
+          "emission factor 0.4 kg CO2e per kWh",
+          "repair cost 20000 to 60000 (assumed, not in data)"
+        ]
+      }
+    ],
+    "quality": {
+      "rows_in": 158054,
+      "duplicates_removed": 200,
+      "negative_readings": 1,
+      "missing_intervals": {
+        "compressors": 26,
+        "furnace": 28,
+        "hvac": 41,
+        "lighting": 26,
+        "line_1": 26,
+        "line_2": 30,
+        "line_3": 27,
+        "main": 28,
+        "utilities": 27
+      },
+      "filled_by_interpolation": 31,
+      "filled_by_typical_profile": 228,
+      "share_of_intervals_estimated": 0.00164,
+      "unmetered_share": 0.0244
+    },
+    "checks": [
+      {
+        "id": 1,
+        "check": "Sub-meters sum to main within tolerance",
+        "passed": true,
+        "detail": "sub-meters are 97.5% of main; unmetered remainder 2.5%"
+      },
+      {
+        "id": 2,
+        "check": "No negative energy; resets handled",
+        "passed": true,
+        "detail": "1 negative readings treated as meter resets and re-estimated"
+      },
+      {
+        "id": 3,
+        "check": "Timestamps regular and in one time zone",
+        "passed": true,
+        "detail": "0 off-grid timestamps; 258 missing meter intervals and 200 duplicate rows reported"
+      },
+      {
+        "id": 4,
+        "check": "Tariff periods do not overlap and cover the period",
+        "passed": true,
+        "detail": "4 tariff rows cover 2026-04-01 to 2026-09-30"
+      },
+      {
+        "id": 5,
+        "check": "Production days match the shift calendar",
+        "passed": false,
+        "detail": "1 day(s) logged as a shift with no output or on a holiday (2026-08-15); treated as non-working. "
+      },
+      {
+        "id": 6,
+        "check": "Row counts match the data card",
+        "passed": true,
+        "detail": "all tables match"
+      }
+    ]
+  },
+  "stress|ols|after_late_drop": {
+    "score": {
+      "total_true": 15.4177,
+      "total_est": 15.42,
+      "error_pp": {
+        "tariff": -0.01,
+        "volume": 0.34,
+        "product_mix": 0.19,
+        "weather": -0.31,
+        "waste": -0.21
+      },
+      "mae_pp": 0.21,
+      "max_abs_error_pp": 0.34,
+      "truth_in_range": {
+        "tariff": true,
+        "volume": false,
+        "product_mix": true,
+        "weather": false,
+        "waste": true
+      },
+      "reconciliation_gap_pp": 0.0,
+      "leak_recall": 1.0,
+      "false_leak_claims": [],
+      "r2": 0.998,
+      "seconds": 1.18,
+      "saving_true_kwh": 87600.0,
+      "saving_range_kwh": [
+        76913,
+        95922
+      ],
+      "saving_in_range": true,
+      "leak_start_found": "2026-07-20",
+      "leak_start_true": "2026-07-20"
+    },
+    "bridge": {
+      "status": "ok",
+      "period": "2026-Q3",
+      "compare_to": "2026-Q2",
+      "bill_reference": 7788658.87,
+      "bill_current": 8989876.45,
+      "total_change_pct": 15.42,
+      "bridge": [
+        {
+          "cause": "tariff",
+          "pct_points": 7.48,
+          "range": [
+            7.48,
+            7.49
+          ],
+          "amount": 583380.54
+        },
+        {
+          "cause": "volume",
+          "pct_points": 2.64,
+          "range": [
+            2.43,
+            2.81
+          ],
+          "amount": 205412.0
+        },
+        {
+          "cause": "product_mix",
+          "pct_points": 1.93,
+          "range": [
+            1.74,
+            2.08
+          ],
+          "amount": 150035.79
+        },
+        {
+          "cause": "weather",
+          "pct_points": 1.93,
+          "range": [
+            1.84,
+            2.05
+          ],
+          "amount": 150419.5
+        },
+        {
+          "cause": "waste",
+          "pct_points": 1.44,
+          "range": [
+            1.19,
+            1.73
+          ],
+          "amount": 111969.75
+        }
+      ],
+      "baseline": {
+        "model": "ols",
+        "r2": 0.998,
+        "coefficients": {
+          "work": 42043.4955,
+          "idle": 17071.9128,
+          "units_A": 9.7089,
+          "units_B": 16.4839,
+          "units_C": 29.9549,
+          "cdd": 1524.1615
+        },
+        "target": "daily cost at reference-quarter prices",
+        "trained_on": "2026-Q2"
+      },
+      "assumptions": [
+        "reference-quarter tariff schedule is the 'old' price for every interval",
+        "calendar effect (number of working days) is counted in volume",
+        "ranges are the 5th to 95th percentile of 200 bootstrap refits of the baseline"
+      ]
+    },
+    "leaks": [
+      {
+        "asset": "compressors",
+        "pattern": "night load stepped up and stayed up",
+        "from": "2026-07-20",
+        "excess_kw": 9.85,
+        "excess_kw_range": [
+          8.78,
+          10.95
+        ],
+        "reference_night_kw": 38.3,
+        "rise_pct": 25.7,
+        "days_observed": 73,
+        "evidence_refs": [
+          "meter_15min:compressors:2026-07-20..2026-09-30:00-05h"
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "action": "Find and repair the leak on compressors",
+        "asset": "compressors",
+        "saving_kwh_per_year": [
+          76913,
+          95922
+        ],
+        "saving_money_per_year": [
+          640942,
+          799350
+        ],
+        "saving_co2e_t_per_year": [
+          30.8,
+          38.4
+        ],
+        "payback_months": [
+          0.3,
+          1.1
+        ],
+        "ease": "easy",
+        "rationale": "Night load on compressors rose 25.7% from 2026-07-20 and stayed up on idle days.",
+        "evidence_refs": [
+          "meter_15min:compressors:2026-07-20..2026-09-30:00-05h"
+        ],
+        "confidence": "medium",
+        "requires_approval": true,
+        "assumptions": [
+          "price 8.33 per kWh (current tariff, flat load)",
+          "emission factor 0.4 kg CO2e per kWh",
+          "repair cost 20000 to 60000 (assumed, not in data)"
+        ]
+      }
+    ],
+    "quality": {
+      "rows_in": 158061,
+      "duplicates_removed": 177,
+      "negative_readings": 1,
+      "missing_intervals": {
+        "compressors": 26,
+        "furnace": 28,
+        "hvac": 41,
+        "lighting": 26,
+        "line_1": 26,
+        "line_3": 27,
+        "main": 28,
+        "utilities": 27
+      },
+      "filled_by_interpolation": 25,
+      "filled_by_typical_profile": 204,
+      "share_of_intervals_estimated": 0.00145,
+      "unmetered_share": 0.0324
+    },
+    "checks": [
+      {
+        "id": 1,
+        "check": "Sub-meters sum to main within tolerance",
+        "passed": true,
+        "detail": "sub-meters are 96.8% of main; unmetered remainder 3.2%"
+      },
+      {
+        "id": 2,
+        "check": "No negative energy; resets handled",
+        "passed": true,
+        "detail": "1 negative readings treated as meter resets and re-estimated"
+      },
+      {
+        "id": 3,
+        "check": "Timestamps regular and in one time zone",
+        "passed": true,
+        "detail": "0 off-grid timestamps; 228 missing meter intervals and 177 duplicate rows reported"
+      },
+      {
+        "id": 4,
+        "check": "Tariff periods do not overlap and cover the period",
+        "passed": true,
+        "detail": "4 tariff rows cover 2026-04-01 to 2026-09-30"
+      },
+      {
+        "id": 5,
+        "check": "Production days match the shift calendar",
+        "passed": false,
+        "detail": "1 day(s) logged as a shift with no output or on a holiday (2026-08-15); treated as non-working. "
+      },
+      {
+        "id": 6,
+        "check": "Row counts match the data card",
+        "passed": false,
+        "detail": "mismatch (found, card): {'meter_15min': (158061, 158054)}"
+      }
+    ]
+  },
+  "stress|ridge|as_loaded": {
+    "score": {
+      "total_true": 15.9418,
+      "total_est": 15.95,
+      "error_pp": {
+        "tariff": 0.01,
+        "volume": -0.06,
+        "product_mix": 0.1,
+        "weather": -0.33,
+        "waste": 0.29
+      },
+      "mae_pp": 0.16,
+      "max_abs_error_pp": 0.33,
+      "truth_in_range": {
+        "tariff": true,
+        "volume": true,
+        "product_mix": true,
+        "weather": false,
+        "waste": false
+      },
+      "reconciliation_gap_pp": 0.0,
+      "leak_recall": 1.0,
+      "false_leak_claims": [],
+      "r2": 0.9976,
+      "seconds": 1.16,
+      "saving_true_kwh": 87600.0,
+      "saving_range_kwh": [
+        76913,
+        95922
+      ],
+      "saving_in_range": true,
+      "leak_start_found": "2026-07-20",
+      "leak_start_true": "2026-07-20"
+    },
+    "bridge": {
+      "status": "ok",
+      "period": "2026-Q3",
+      "compare_to": "2026-Q2",
+      "bill_reference": 7788658.87,
+      "bill_current": 9030695.65,
+      "total_change_pct": 15.95,
+      "bridge": [
+        {
+          "cause": "tariff",
+          "pct_points": 8.02,
+          "range": [
+            8.01,
+            8.02
+          ],
+          "amount": 624199.74
+        },
+        {
+          "cause": "volume",
+          "pct_points": 2.24,
+          "range": [
+            1.99,
+            2.4
+          ],
+          "amount": 174366.06
+        },
+        {
+          "cause": "product_mix",
+          "pct_points": 1.84,
+          "range": [
+            1.62,
+            1.98
+          ],
+          "amount": 143504.05
+        },
+        {
+          "cause": "weather",
+          "pct_points": 1.91,
+          "range": [
+            1.81,
+            2.02
+          ],
+          "amount": 148546.27
+        },
+        {
+          "cause": "waste",
+          "pct_points": 1.94,
+          "range": [
+            1.72,
+            2.31
+          ],
+          "amount": 151420.66
+        }
+      ],
+      "baseline": {
+        "model": "ridge",
+        "r2": 0.9976,
+        "coefficients": {
+          "work": 55212.0381,
+          "idle": 17170.5883,
+          "units_A": 5.5718,
+          "units_B": 12.0827,
+          "units_C": 24.9496,
+          "cdd": 1505.1806
+        },
+        "target": "daily cost at reference-quarter prices",
+        "trained_on": "2026-Q2"
+      },
+      "assumptions": [
+        "reference-quarter tariff schedule is the 'old' price for every interval",
+        "calendar effect (number of working days) is counted in volume",
+        "ranges are the 5th to 95th percentile of 200 bootstrap refits of the baseline"
+      ]
+    },
+    "leaks": [
+      {
+        "asset": "compressors",
+        "pattern": "night load stepped up and stayed up",
+        "from": "2026-07-20",
+        "excess_kw": 9.85,
+        "excess_kw_range": [
+          8.78,
+          10.95
+        ],
+        "reference_night_kw": 38.3,
+        "rise_pct": 25.7,
+        "days_observed": 73,
+        "evidence_refs": [
+          "meter_15min:compressors:2026-07-20..2026-09-30:00-05h"
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "action": "Find and repair the leak on compressors",
+        "asset": "compressors",
+        "saving_kwh_per_year": [
+          76913,
+          95922
+        ],
+        "saving_money_per_year": [
+          656324,
+          818534
+        ],
+        "saving_co2e_t_per_year": [
+          30.8,
+          38.4
+        ],
+        "payback_months": [
+          0.3,
+          1.1
+        ],
+        "ease": "easy",
+        "rationale": "Night load on compressors rose 25.7% from 2026-07-20 and stayed up on idle days.",
+        "evidence_refs": [
+          "meter_15min:compressors:2026-07-20..2026-09-30:00-05h"
+        ],
+        "confidence": "medium",
+        "requires_approval": true,
+        "assumptions": [
+          "price 8.53 per kWh (current tariff, flat load)",
+          "emission factor 0.4 kg CO2e per kWh",
+          "repair cost 20000 to 60000 (assumed, not in data)"
+        ]
+      }
+    ],
+    "quality": {
+      "rows_in": 158054,
+      "duplicates_removed": 200,
+      "negative_readings": 1,
+      "missing_intervals": {
+        "compressors": 26,
+        "furnace": 28,
+        "hvac": 41,
+        "lighting": 26,
+        "line_1": 26,
+        "line_2": 30,
+        "line_3": 27,
+        "main": 28,
+        "utilities": 27
+      },
+      "filled_by_interpolation": 31,
+      "filled_by_typical_profile": 228,
+      "share_of_intervals_estimated": 0.00164,
+      "unmetered_share": 0.0244
+    },
+    "checks": [
+      {
+        "id": 1,
+        "check": "Sub-meters sum to main within tolerance",
+        "passed": true,
+        "detail": "sub-meters are 97.5% of main; unmetered remainder 2.5%"
+      },
+      {
+        "id": 2,
+        "check": "No negative energy; resets handled",
+        "passed": true,
+        "detail": "1 negative readings treated as meter resets and re-estimated"
+      },
+      {
+        "id": 3,
+        "check": "Timestamps regular and in one time zone",
+        "passed": true,
+        "detail": "0 off-grid timestamps; 258 missing meter intervals and 200 duplicate rows reported"
+      },
+      {
+        "id": 4,
+        "check": "Tariff periods do not overlap and cover the period",
+        "passed": true,
+        "detail": "4 tariff rows cover 2026-04-01 to 2026-09-30"
+      },
+      {
+        "id": 5,
+        "check": "Production days match the shift calendar",
+        "passed": false,
+        "detail": "1 day(s) logged as a shift with no output or on a holiday (2026-08-15); treated as non-working. "
+      },
+      {
+        "id": 6,
+        "check": "Row counts match the data card",
+        "passed": true,
+        "detail": "all tables match"
+      }
+    ]
+  },
+  "stress|ridge|after_late_drop": {
+    "score": {
+      "total_true": 15.4177,
+      "total_est": 15.42,
+      "error_pp": {
+        "tariff": -0.0,
+        "volume": -0.06,
+        "product_mix": 0.1,
+        "weather": -0.33,
+        "waste": 0.29
+      },
+      "mae_pp": 0.16,
+      "max_abs_error_pp": 0.33,
+      "truth_in_range": {
+        "tariff": true,
+        "volume": true,
+        "product_mix": true,
+        "weather": false,
+        "waste": false
+      },
+      "reconciliation_gap_pp": 0.0,
+      "leak_recall": 1.0,
+      "false_leak_claims": [],
+      "r2": 0.9976,
+      "seconds": 1.22,
+      "saving_true_kwh": 87600.0,
+      "saving_range_kwh": [
+        76913,
+        95922
+      ],
+      "saving_in_range": true,
+      "leak_start_found": "2026-07-20",
+      "leak_start_true": "2026-07-20"
+    },
+    "bridge": {
+      "status": "ok",
+      "period": "2026-Q3",
+      "compare_to": "2026-Q2",
+      "bill_reference": 7788658.87,
+      "bill_current": 8989876.45,
+      "total_change_pct": 15.42,
+      "bridge": [
+        {
+          "cause": "tariff",
+          "pct_points": 7.49,
+          "range": [
+            7.49,
+            7.49
+          ],
+          "amount": 583380.54
+        },
+        {
+          "cause": "volume",
+          "pct_points": 2.24,
+          "range": [
+            1.99,
+            2.4
+          ],
+          "amount": 174366.06
+        },
+        {
+          "cause": "product_mix",
+          "pct_points": 1.84,
+          "range": [
+            1.62,
+            1.98
+          ],
+          "amount": 143504.05
+        },
+        {
+          "cause": "weather",
+          "pct_points": 1.91,
+          "range": [
+            1.81,
+            2.02
+          ],
+          "amount": 148546.27
+        },
+        {
+          "cause": "waste",
+          "pct_points": 1.94,
+          "range": [
+            1.72,
+            2.31
+          ],
+          "amount": 151420.66
+        }
+      ],
+      "baseline": {
+        "model": "ridge",
+        "r2": 0.9976,
+        "coefficients": {
+          "work": 55212.0381,
+          "idle": 17170.5883,
+          "units_A": 5.5718,
+          "units_B": 12.0827,
+          "units_C": 24.9496,
+          "cdd": 1505.1806
+        },
+        "target": "daily cost at reference-quarter prices",
+        "trained_on": "2026-Q2"
+      },
+      "assumptions": [
+        "reference-quarter tariff schedule is the 'old' price for every interval",
+        "calendar effect (number of working days) is counted in volume",
+        "ranges are the 5th to 95th percentile of 200 bootstrap refits of the baseline"
+      ]
+    },
+    "leaks": [
+      {
+        "asset": "compressors",
+        "pattern": "night load stepped up and stayed up",
+        "from": "2026-07-20",
+        "excess_kw": 9.85,
+        "excess_kw_range": [
+          8.78,
+          10.95
+        ],
+        "reference_night_kw": 38.3,
+        "rise_pct": 25.7,
+        "days_observed": 73,
+        "evidence_refs": [
+          "meter_15min:compressors:2026-07-20..2026-09-30:00-05h"
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "action": "Find and repair the leak on compressors",
+        "asset": "compressors",
+        "saving_kwh_per_year": [
+          76913,
+          95922
+        ],
+        "saving_money_per_year": [
+          640942,
+          799350
+        ],
+        "saving_co2e_t_per_year": [
+          30.8,
+          38.4
+        ],
+        "payback_months": [
+          0.3,
+          1.1
+        ],
+        "ease": "easy",
+        "rationale": "Night load on compressors rose 25.7% from 2026-07-20 and stayed up on idle days.",
+        "evidence_refs": [
+          "meter_15min:compressors:2026-07-20..2026-09-30:00-05h"
+        ],
+        "confidence": "medium",
+        "requires_approval": true,
+        "assumptions": [
+          "price 8.33 per kWh (current tariff, flat load)",
+          "emission factor 0.4 kg CO2e per kWh",
+          "repair cost 20000 to 60000 (assumed, not in data)"
+        ]
+      }
+    ],
+    "quality": {
+      "rows_in": 158061,
+      "duplicates_removed": 177,
+      "negative_readings": 1,
+      "missing_intervals": {
+        "compressors": 26,
+        "furnace": 28,
+        "hvac": 41,
+        "lighting": 26,
+        "line_1": 26,
+        "line_3": 27,
+        "main": 28,
+        "utilities": 27
+      },
+      "filled_by_interpolation": 25,
+      "filled_by_typical_profile": 204,
+      "share_of_intervals_estimated": 0.00145,
+      "unmetered_share": 0.0324
+    },
+    "checks": [
+      {
+        "id": 1,
+        "check": "Sub-meters sum to main within tolerance",
+        "passed": true,
+        "detail": "sub-meters are 96.8% of main; unmetered remainder 3.2%"
+      },
+      {
+        "id": 2,
+        "check": "No negative energy; resets handled",
+        "passed": true,
+        "detail": "1 negative readings treated as meter resets and re-estimated"
+      },
+      {
+        "id": 3,
+        "check": "Timestamps regular and in one time zone",
+        "passed": true,
+        "detail": "0 off-grid timestamps; 228 missing meter intervals and 177 duplicate rows reported"
+      },
+      {
+        "id": 4,
+        "check": "Tariff periods do not overlap and cover the period",
+        "passed": true,
+        "detail": "4 tariff rows cover 2026-04-01 to 2026-09-30"
+      },
+      {
+        "id": 5,
+        "check": "Production days match the shift calendar",
+        "passed": false,
+        "detail": "1 day(s) logged as a shift with no output or on a holiday (2026-08-15); treated as non-working. "
+      },
+      {
+        "id": 6,
+        "check": "Row counts match the data card",
+        "passed": false,
+        "detail": "mismatch (found, card): {'meter_15min': (158061, 158054)}"
+      }
+    ]
+  }
+}
