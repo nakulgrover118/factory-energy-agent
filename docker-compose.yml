@@ -7,21 +7,24 @@ services:
     environment:
       STORE_DIR: /app/store
       SEED_DEMO_DATA: ${SEED_DEMO_DATA:-true}
-      MOCK_LLM: ${MOCK_LLM:-true}
+      AWS_SHARED_CREDENTIALS_FILE: /home/app/.aws/credentials
+      AWS_CONFIG_FILE: /home/app/.aws/config
     volumes:
       - store:/app/store
+      - ./data:/app/data:ro            # judges' CSV folders: python -m energy.loader /app/data/<folder>
+      - ${HOME}/.aws:/home/app/.aws:ro # Bedrock credentials (AWS_PROFILE in .env); never copied into the image
     ports:
       - "8000:8000"
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
       interval: 10s
-      timeout: 5s
+      timeout: 15s
       retries: 12
-      start_period: 30s
+      start_period: 40s
 
   ui:
     build: .
-    command: ["streamlit", "run", "ui/app.py", "--server.port=8501", "--server.address=0.0.0.0", "--server.headless=true", "--browser.gatherUsageStats=false"]
+    command: ["streamlit", "run", "ui/app.py", "--server.port=8501", "--server.address=0.0.0.0"]
     environment:
       API_URL: http://api:8000
     ports:

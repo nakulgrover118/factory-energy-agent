@@ -9,8 +9,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY src ./src
 COPY ui ./ui
 COPY tests ./tests
+COPY eval/cases.json ./eval/cases.json
+COPY .streamlit ./.streamlit
 
-RUN useradd --create-home app && mkdir -p /app/store && chown -R app /app
+RUN useradd --create-home app && mkdir -p /app/store /home/app/.aws && chown -R app /app /home/app
 USER app
 
 EXPOSE 8000 8501

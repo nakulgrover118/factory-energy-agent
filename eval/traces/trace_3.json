@@ -1,0 +1,354 @@
+{
+    "run_id": "en-f95c05dd",
+    "question": "Is the old furnace to blame for the higher bill?",
+    "period": "2026-Q3",
+    "compare_to": "2026-Q2",
+    "answer_type": "decomposition",
+    "steps": [
+        {
+            "agent": "orchestrator",
+            "tool": "route",
+            "input": {
+                "router": "llm",
+                "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+                "ms": 1933,
+                "tokens": 1767
+            },
+            "output": {
+                "intent": "asset_check",
+                "params": {
+                    "asset": "furnace",
+                    "asset_request": "blame"
+                },
+                "plan": [
+                    "decompose_change",
+                    "detect_new_waste",
+                    "find_off_hours_waste",
+                    "check_asset"
+                ],
+                "period": "2026-Q3",
+                "compare_to": "2026-Q2"
+            }
+        },
+        {
+            "agent": "analyst",
+            "tool": "decompose_change",
+            "input": {
+                "period": "2026-Q3",
+                "compare_to": "2026-Q2"
+            },
+            "output": {
+                "total_change_pct": 15.03,
+                "baseline_r2": 0.9982,
+                "tariff": 7.51,
+                "volume": 2.82,
+                "product_mix": 1.99,
+                "weather": 0.66,
+                "waste": 2.05
+            }
+        },
+        {
+            "agent": "analyst",
+            "tool": "detect_new_waste",
+            "input": {
+                "period": "2026-Q3",
+                "compare_to": "2026-Q2"
+            },
+            "output": [
+                {
+                    "asset": "compressors",
+                    "from": "2026-07-20",
+                    "excess_kw": 9.99
+                }
+            ]
+        },
+        {
+            "agent": "analyst",
+            "tool": "find_off_hours_waste",
+            "input": {
+                "period": "2026-Q3",
+                "compare_to": "2026-Q2"
+            },
+            "output": [
+                {
+                    "asset": "compressors",
+                    "window": "day and night (always on)",
+                    "excess_kw": [
+                        9.0,
+                        11.0
+                    ]
+                },
+                {
+                    "asset": "lighting",
+                    "window": "nights",
+                    "excess_kw": [
+                        28.0,
+                        32.0
+                    ]
+                },
+                {
+                    "asset": "hvac",
+                    "window": "non-working days",
+                    "excess_kw": [
+                        79.4,
+                        95.2
+                    ]
+                }
+            ]
+        },
+        {
+            "agent": "analyst",
+            "tool": "check_asset",
+            "input": {
+                "period": "2026-Q3",
+                "compare_to": "2026-Q2",
+                "asset": "furnace"
+            },
+            "output": {
+                "asset": "furnace",
+                "change_pct": 5.6,
+                "factory_change_pct": 7.5,
+                "off_hours_waste": false,
+                "new_waste": false
+            }
+        },
+        {
+            "agent": "checker",
+            "tool": "verify",
+            "output": {
+                "ok": true,
+                "problems": []
+            }
+        },
+        {
+            "agent": "writer",
+            "tool": "write_finance_brief",
+            "input": {
+                "writer": "llm",
+                "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+                "ms": 1594,
+                "tokens": 978
+            },
+            "output": {
+                "answer_type": "decomposition"
+            }
+        },
+        {
+            "agent": "checker",
+            "tool": "number_check",
+            "output": {
+                "unmatched_first_pass": [],
+                "unmatched_final": [],
+                "all_numbers_match_tools": true
+            }
+        }
+    ],
+    "llm_calls": 2,
+    "tokens": 2745,
+    "llm_errors": [],
+    "llm_provider": "bedrock",
+    "llm_model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "data_version": 6,
+    "latency_ms": 3539,
+    "approval_status": "not_applicable",
+    "response": {
+        "run_id": "en-f95c05dd",
+        "answer_type": "decomposition",
+        "summary": "No. Furnace did not drive the rise. It used 178,399 kWh (19.3% of the main meter), up 5.6% while the factory changed 7.5%. The bill rose 15.03% from 2026-Q2 to 2026-Q3 (\u20b967.3 lakh to \u20b977.4 lakh). Of this, 12.98 points are uncontrollable: tariff 7.51, volume 2.82, product mix 1.99, and weather 0.66. The remaining 2.05 points (1.91 to 2.16) are new waste. Compressors' night load increased from 6.0 kW to 16.0 kW on 2026-07-20 and has remained there.",
+        "bridge": [
+            {
+                "cause": "tariff",
+                "pct_points": 7.51,
+                "range": [
+                    7.49,
+                    7.51
+                ],
+                "amount": 504016.32
+            },
+            {
+                "cause": "volume",
+                "pct_points": 2.82,
+                "range": [
+                    2.74,
+                    2.91
+                ],
+                "amount": 189721.0
+            },
+            {
+                "cause": "product_mix",
+                "pct_points": 1.99,
+                "range": [
+                    1.91,
+                    2.08
+                ],
+                "amount": 134175.68
+            },
+            {
+                "cause": "weather",
+                "pct_points": 0.66,
+                "range": [
+                    0.64,
+                    0.69
+                ],
+                "amount": 44593.16
+            },
+            {
+                "cause": "waste",
+                "pct_points": 2.05,
+                "range": [
+                    1.91,
+                    2.16
+                ],
+                "amount": 138189.79
+            }
+        ],
+        "recommendations": [],
+        "data": {
+            "detect_new_waste": [
+                {
+                    "asset": "compressors",
+                    "pattern": "night load stepped up and stayed up",
+                    "from": "2026-07-20",
+                    "excess_kw": 9.99,
+                    "excess_kw_range": [
+                        8.97,
+                        11.01
+                    ],
+                    "reference_night_kw": 6.0,
+                    "rise_pct": 166.4,
+                    "days_observed": 73,
+                    "evidence_refs": [
+                        "meter_15min:compressors:2026-07-20..2026-09-30:00-05h"
+                    ]
+                }
+            ],
+            "find_off_hours_waste": [
+                {
+                    "asset": "compressors",
+                    "window": "day and night (always on)",
+                    "when": "24/7",
+                    "off_hours_kw": 16.0,
+                    "on_shift_kw": 103.0,
+                    "off_hours_share": 0.155,
+                    "benchmark_share": [
+                        0.05,
+                        0.1
+                    ],
+                    "excess_kw": [
+                        9.0,
+                        11.0
+                    ],
+                    "hours_per_year": 8760,
+                    "excess_kwh_per_year": [
+                        78577,
+                        96448
+                    ],
+                    "confidence": "medium",
+                    "measured_on": [
+                        "2026-07-20",
+                        "2026-09-30"
+                    ],
+                    "evidence_refs": [
+                        "meter_15min:compressors:2026-07-20..2026-09-30:00-24h"
+                    ]
+                },
+                {
+                    "asset": "lighting",
+                    "window": "nights",
+                    "when": "22:00-06:00 every night",
+                    "off_hours_kw": 34.0,
+                    "on_shift_kw": 40.0,
+                    "off_hours_share": 0.851,
+                    "benchmark_share": [
+                        0.05,
+                        0.15
+                    ],
+                    "excess_kw": [
+                        28.0,
+                        32.0
+                    ],
+                    "hours_per_year": 2920,
+                    "excess_kwh_per_year": [
+                        81778,
+                        93452
+                    ],
+                    "confidence": "high",
+                    "measured_on": [
+                        "2026-07-01",
+                        "2026-09-30"
+                    ],
+                    "evidence_refs": [
+                        "meter_15min:lighting:2026-07-01..2026-09-30:nights"
+                    ]
+                },
+                {
+                    "asset": "hvac",
+                    "window": "non-working days",
+                    "when": "06:00-22:00 on Sundays and holidays",
+                    "off_hours_kw": 100.5,
+                    "on_shift_kw": 105.4,
+                    "off_hours_share": 0.954,
+                    "benchmark_share": [
+                        0.05,
+                        0.2
+                    ],
+                    "excess_kw": [
+                        79.4,
+                        95.2
+                    ],
+                    "hours_per_year": 952,
+                    "excess_kwh_per_year": [
+                        75620,
+                        90673
+                    ],
+                    "confidence": "high",
+                    "measured_on": [
+                        "2026-07-01",
+                        "2026-09-30"
+                    ],
+                    "evidence_refs": [
+                        "meter_15min:hvac:2026-07-01..2026-09-30:non-working_days"
+                    ]
+                }
+            ],
+            "check_asset": {
+                "asset": "furnace",
+                "kwh": 178399.3,
+                "share_of_main": 0.1926,
+                "change_pct": 5.6,
+                "factory_change_pct": 7.5,
+                "off_hours_waste": [],
+                "new_waste": []
+            },
+            "total_change_pct": 15.03,
+            "bill_reference": 6726356.24,
+            "bill_current": 7737052.19,
+            "baseline": {
+                "model": "ols",
+                "r2": 0.9982,
+                "coefficients": {
+                    "work": 33331.123,
+                    "idle": 26815.4611,
+                    "units_A": 9.269,
+                    "units_B": 16.0194,
+                    "units_C": 27.7696,
+                    "cdd": 935.8481
+                },
+                "target": "daily cost at reference-quarter prices",
+                "trained_on": "2026-Q2"
+            },
+            "waste_confirmed": true,
+            "period": "2026-Q3",
+            "compare_to": "2026-Q2",
+            "currency": "INR"
+        },
+        "assumptions": [
+            "reference-quarter tariff schedule is the 'old' price for every interval",
+            "calendar effect (number of working days) is counted in volume",
+            "ranges are the 5th to 95th percentile of 200 bootstrap refits of the baseline"
+        ],
+        "limitations": [
+            "Baseline fit R2 0.9982 on 2026-Q2; ranges cover fit error only, not a wrong model form"
+        ]
+    }
+}

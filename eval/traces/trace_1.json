@@ -1,0 +1,493 @@
+{
+    "run_id": "en-e0234dbc",
+    "question": "Why did the bill go up 15%?",
+    "period": "2026-Q3",
+    "compare_to": "2026-Q2",
+    "answer_type": "decomposition",
+    "steps": [
+        {
+            "agent": "orchestrator",
+            "tool": "route",
+            "input": {
+                "router": "llm",
+                "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+                "ms": 1809,
+                "tokens": 1758
+            },
+            "output": {
+                "intent": "bridge",
+                "params": {
+                    "period": "2026-Q3",
+                    "compare_to": "2026-Q2",
+                    "stated_change_pct": 15
+                },
+                "plan": [
+                    "decompose_change",
+                    "detect_new_waste",
+                    "find_off_hours_waste",
+                    "estimate_savings"
+                ],
+                "period": "2026-Q3",
+                "compare_to": "2026-Q2"
+            }
+        },
+        {
+            "agent": "analyst",
+            "tool": "decompose_change",
+            "input": {
+                "period": "2026-Q3",
+                "compare_to": "2026-Q2"
+            },
+            "output": {
+                "total_change_pct": 15.03,
+                "baseline_r2": 0.9982,
+                "tariff": 7.51,
+                "volume": 2.82,
+                "product_mix": 1.99,
+                "weather": 0.66,
+                "waste": 2.05
+            }
+        },
+        {
+            "agent": "analyst",
+            "tool": "detect_new_waste",
+            "input": {
+                "period": "2026-Q3",
+                "compare_to": "2026-Q2"
+            },
+            "output": [
+                {
+                    "asset": "compressors",
+                    "from": "2026-07-20",
+                    "excess_kw": 9.99
+                }
+            ]
+        },
+        {
+            "agent": "analyst",
+            "tool": "find_off_hours_waste",
+            "input": {
+                "period": "2026-Q3",
+                "compare_to": "2026-Q2"
+            },
+            "output": [
+                {
+                    "asset": "compressors",
+                    "window": "day and night (always on)",
+                    "excess_kw": [
+                        9.0,
+                        11.0
+                    ]
+                },
+                {
+                    "asset": "lighting",
+                    "window": "nights",
+                    "excess_kw": [
+                        28.0,
+                        32.0
+                    ]
+                },
+                {
+                    "asset": "hvac",
+                    "window": "non-working days",
+                    "excess_kw": [
+                        79.4,
+                        95.2
+                    ]
+                }
+            ]
+        },
+        {
+            "agent": "analyst",
+            "tool": "estimate_savings",
+            "input": {
+                "period": "2026-Q3",
+                "compare_to": "2026-Q2",
+                "emission_factor": 0.71
+            },
+            "output": [
+                {
+                    "rank": 1,
+                    "action": "Schedule HVAC off on non-working days (BMS time schedule)",
+                    "payback_months": [
+                        0.1,
+                        0.4
+                    ],
+                    "saving_money_per_year": [
+                        688142,
+                        825124
+                    ]
+                },
+                {
+                    "rank": 2,
+                    "action": "Find and fix compressed-air leaks (ultrasonic leak survey)",
+                    "payback_months": [
+                        0.6,
+                        1.5
+                    ],
+                    "saving_money_per_year": [
+                        654808,
+                        803733
+                    ]
+                },
+                {
+                    "rank": 3,
+                    "action": "Switch hall lighting off after the last shift (timers or occupancy sensors)",
+                    "payback_months": [
+                        2.3,
+                        5.4
+                    ],
+                    "saving_money_per_year": [
+                        556090,
+                        635474
+                    ]
+                }
+            ]
+        },
+        {
+            "agent": "checker",
+            "tool": "verify",
+            "output": {
+                "ok": true,
+                "problems": []
+            }
+        },
+        {
+            "agent": "writer",
+            "tool": "write_finance_brief",
+            "input": {
+                "writer": "llm",
+                "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+                "ms": 1782,
+                "tokens": 1567
+            },
+            "output": {
+                "answer_type": "decomposition"
+            }
+        },
+        {
+            "agent": "checker",
+            "tool": "number_check",
+            "output": {
+                "unmatched_first_pass": [],
+                "unmatched_final": [],
+                "all_numbers_match_tools": true
+            }
+        }
+    ],
+    "llm_calls": 2,
+    "tokens": 3325,
+    "llm_errors": [],
+    "llm_provider": "bedrock",
+    "llm_model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "data_version": 6,
+    "latency_ms": 3889,
+    "approval_status": "pending",
+    "response": {
+        "run_id": "en-e0234dbc",
+        "answer_type": "decomposition",
+        "summary": "The bill rose 15.03% from 2026-Q2 to 2026-Q3 (\u20b967.3 lakh to \u20b977.4 lakh). Of this, 12.98 percentage points are outside your control: tariff 7.51, volume 2.82, product mix 1.99, weather 0.66. The remaining 2.05 percentage points (1.91 to 2.16) are new waste\u2014compressor night load jumped from 6.0 kW to 16.0 kW on 2026-07-20. Fixing three waste patterns would save \u20b919.0\u201322.6 lakh annually with payback of 0.1\u20130.4 months on the fastest action. Actions need your approval.",
+        "bridge": [
+            {
+                "cause": "tariff",
+                "pct_points": 7.51,
+                "range": [
+                    7.49,
+                    7.51
+                ],
+                "amount": 504016.32
+            },
+            {
+                "cause": "volume",
+                "pct_points": 2.82,
+                "range": [
+                    2.74,
+                    2.91
+                ],
+                "amount": 189721.0
+            },
+            {
+                "cause": "product_mix",
+                "pct_points": 1.99,
+                "range": [
+                    1.91,
+                    2.08
+                ],
+                "amount": 134175.68
+            },
+            {
+                "cause": "weather",
+                "pct_points": 0.66,
+                "range": [
+                    0.64,
+                    0.69
+                ],
+                "amount": 44593.16
+            },
+            {
+                "cause": "waste",
+                "pct_points": 2.05,
+                "range": [
+                    1.91,
+                    2.16
+                ],
+                "amount": 138189.79
+            }
+        ],
+        "recommendations": [
+            {
+                "rank": 1,
+                "action": "Schedule HVAC off on non-working days (BMS time schedule)",
+                "asset": "hvac",
+                "rationale": "HVAC load is 100.5 kW during 06:00-22:00 on Sundays and holidays, 95% of its load during the shift, where at most about 20% would be expected.",
+                "evidence_refs": [
+                    "meter_15min:hvac:2026-07-01..2026-09-30:non-working_days"
+                ],
+                "confidence": "high",
+                "requires_approval": true,
+                "ease": "easy",
+                "saving_kwh_per_year": [
+                    75620,
+                    90673
+                ],
+                "saving_money_per_year": [
+                    688142,
+                    825124
+                ],
+                "saving_co2e_t_per_year": [
+                    53.7,
+                    64.4
+                ],
+                "payback_months": [
+                    0.1,
+                    0.4
+                ],
+                "implementation_cost": [
+                    10000,
+                    25000
+                ],
+                "action_key": "hvac|non-working days",
+                "approval": {
+                    "decision": "pending"
+                },
+                "estimated_impact": "Saves 75,620 to 90,673 kWh and 688,142 to 825,124 INR a year"
+            },
+            {
+                "rank": 2,
+                "action": "Find and fix compressed-air leaks (ultrasonic leak survey)",
+                "asset": "compressors",
+                "rationale": "Compressor load is 16.0 kW around the clock, 16% of its load during the shift, where at most about 10% would be expected. Its night load rose from 6.0 kW to 16.0 kW on 2026-07-20 and has stayed there.",
+                "evidence_refs": [
+                    "meter_15min:compressors:2026-07-20..2026-09-30:00-24h",
+                    "meter_15min:compressors:2026-07-20..2026-09-30:00-05h"
+                ],
+                "confidence": "high",
+                "requires_approval": true,
+                "ease": "easy",
+                "saving_kwh_per_year": [
+                    78577,
+                    96448
+                ],
+                "saving_money_per_year": [
+                    654808,
+                    803733
+                ],
+                "saving_co2e_t_per_year": [
+                    55.8,
+                    68.5
+                ],
+                "payback_months": [
+                    0.6,
+                    1.5
+                ],
+                "implementation_cost": [
+                    40000,
+                    80000
+                ],
+                "action_key": "compressors|day and night (always on)",
+                "approval": {
+                    "decision": "pending"
+                },
+                "estimated_impact": "Saves 78,577 to 96,448 kWh and 654,808 to 803,733 INR a year"
+            },
+            {
+                "rank": 3,
+                "action": "Switch hall lighting off after the last shift (timers or occupancy sensors)",
+                "asset": "lighting",
+                "rationale": "Lighting load is 34.0 kW during 22:00-06:00 every night, 85% of its load during the shift, where at most about 15% would be expected.",
+                "evidence_refs": [
+                    "meter_15min:lighting:2026-07-01..2026-09-30:nights"
+                ],
+                "confidence": "high",
+                "requires_approval": true,
+                "ease": "easy",
+                "saving_kwh_per_year": [
+                    81778,
+                    93452
+                ],
+                "saving_money_per_year": [
+                    556090,
+                    635474
+                ],
+                "saving_co2e_t_per_year": [
+                    58.1,
+                    66.4
+                ],
+                "payback_months": [
+                    2.3,
+                    5.4
+                ],
+                "implementation_cost": [
+                    120000,
+                    250000
+                ],
+                "action_key": "lighting|nights",
+                "approval": {
+                    "decision": "pending"
+                },
+                "estimated_impact": "Saves 81,778 to 93,452 kWh and 556,090 to 635,474 INR a year"
+            }
+        ],
+        "data": {
+            "detect_new_waste": [
+                {
+                    "asset": "compressors",
+                    "pattern": "night load stepped up and stayed up",
+                    "from": "2026-07-20",
+                    "excess_kw": 9.99,
+                    "excess_kw_range": [
+                        8.97,
+                        11.01
+                    ],
+                    "reference_night_kw": 6.0,
+                    "rise_pct": 166.4,
+                    "days_observed": 73,
+                    "evidence_refs": [
+                        "meter_15min:compressors:2026-07-20..2026-09-30:00-05h"
+                    ]
+                }
+            ],
+            "find_off_hours_waste": [
+                {
+                    "asset": "compressors",
+                    "window": "day and night (always on)",
+                    "when": "24/7",
+                    "off_hours_kw": 16.0,
+                    "on_shift_kw": 103.0,
+                    "off_hours_share": 0.155,
+                    "benchmark_share": [
+                        0.05,
+                        0.1
+                    ],
+                    "excess_kw": [
+                        9.0,
+                        11.0
+                    ],
+                    "hours_per_year": 8760,
+                    "excess_kwh_per_year": [
+                        78577,
+                        96448
+                    ],
+                    "confidence": "medium",
+                    "measured_on": [
+                        "2026-07-20",
+                        "2026-09-30"
+                    ],
+                    "evidence_refs": [
+                        "meter_15min:compressors:2026-07-20..2026-09-30:00-24h"
+                    ]
+                },
+                {
+                    "asset": "lighting",
+                    "window": "nights",
+                    "when": "22:00-06:00 every night",
+                    "off_hours_kw": 34.0,
+                    "on_shift_kw": 40.0,
+                    "off_hours_share": 0.851,
+                    "benchmark_share": [
+                        0.05,
+                        0.15
+                    ],
+                    "excess_kw": [
+                        28.0,
+                        32.0
+                    ],
+                    "hours_per_year": 2920,
+                    "excess_kwh_per_year": [
+                        81778,
+                        93452
+                    ],
+                    "confidence": "high",
+                    "measured_on": [
+                        "2026-07-01",
+                        "2026-09-30"
+                    ],
+                    "evidence_refs": [
+                        "meter_15min:lighting:2026-07-01..2026-09-30:nights"
+                    ]
+                },
+                {
+                    "asset": "hvac",
+                    "window": "non-working days",
+                    "when": "06:00-22:00 on Sundays and holidays",
+                    "off_hours_kw": 100.5,
+                    "on_shift_kw": 105.4,
+                    "off_hours_share": 0.954,
+                    "benchmark_share": [
+                        0.05,
+                        0.2
+                    ],
+                    "excess_kw": [
+                        79.4,
+                        95.2
+                    ],
+                    "hours_per_year": 952,
+                    "excess_kwh_per_year": [
+                        75620,
+                        90673
+                    ],
+                    "confidence": "high",
+                    "measured_on": [
+                        "2026-07-01",
+                        "2026-09-30"
+                    ],
+                    "evidence_refs": [
+                        "meter_15min:hvac:2026-07-01..2026-09-30:non-working_days"
+                    ]
+                }
+            ],
+            "total_change_pct": 15.03,
+            "bill_reference": 6726356.24,
+            "bill_current": 7737052.19,
+            "baseline": {
+                "model": "ols",
+                "r2": 0.9982,
+                "coefficients": {
+                    "work": 33331.123,
+                    "idle": 26815.4611,
+                    "units_A": 9.269,
+                    "units_B": 16.0194,
+                    "units_C": 27.7696,
+                    "cdd": 935.8481
+                },
+                "target": "daily cost at reference-quarter prices",
+                "trained_on": "2026-Q2"
+            },
+            "waste_confirmed": true,
+            "period": "2026-Q3",
+            "compare_to": "2026-Q2",
+            "currency": "INR"
+        },
+        "assumptions": [
+            "Emission factor 0.71 kg CO2e per kWh (assumed default (not in the loaded data))",
+            "Implementation costs are assumed ranges; the data has no cost table",
+            "Expected off-hours load per asset type is an engineering rule of thumb",
+            "reference-quarter tariff schedule is the 'old' price for every interval",
+            "calendar effect (number of working days) is counted in volume",
+            "ranges are the 5th to 95th percentile of 200 bootstrap refits of the baseline"
+        ],
+        "limitations": [
+            "Baseline fit R2 0.9982 on 2026-Q2; ranges cover fit error only, not a wrong model form"
+        ]
+    }
+}
