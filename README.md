@@ -203,3 +203,53 @@ The code, tests and documentation were written with Claude Code (Anthropic), wor
 | [Name 2] | API, agent and LLM layer |
 | [Name 3] | Data generator, validation, evaluation |
 | [Name 4] | Dashboard and delivery |
+
+## Setting up on a new device
+
+The data isn't in the GitHub repository, so on a new device you regenerate it. The generator is seeded, so the same commands produce the same datasets as long as the pinned package versions are installed.
+
+The device needs Git and Python 3.11. The person also needs access to the private repository, so add them as a collaborator first. For the LLM, copy `.env.example` to `.env` and set `AWS_PROFILE` to a profile with Bedrock access, or set `MOCK_LLM=true` to run without one.
+
+Steps on Windows:
+
+1. Get the code.
+
+   ```
+   git clone https://github.com/nakulgrover118/factory-energy-agent.git
+   cd factory-energy-agent
+   ```
+
+2. Create the environment and install packages.
+
+   ```
+   py -3.11 -m venv .venv
+   .venv\Scripts\python -m pip install -r requirements.txt
+   ```
+
+3. Generate the five datasets into a new `data` folder.
+
+   ```
+   set PYTHONPATH=src
+   .venv\Scripts\python -m energy.generate --out data --seeds 1 2 3 --control --stress
+   ```
+
+4. Start the API in one terminal (with `PYTHONPATH=src` set), then load one dataset from a second terminal. The loader prints the validation output.
+
+   ```
+   .venv\Scripts\python -m uvicorn energy.api:app --app-dir src --port 8000
+   .venv\Scripts\python -m energy.loader data\seed_1
+   ```
+
+5. Start the dashboard.
+
+   ```
+   .venv\Scripts\python -m streamlit run ui/app.py
+   ```
+
+On macOS or Linux, use `python3.11 -m venv .venv`, `.venv/bin/python` in place of `.venv\Scripts\python`, and `export PYTHONPATH=src`.
+
+Other ways to get data onto the device:
+
+- **Docker:** `docker compose up --build` generates and loads one dataset automatically on first start. It has not been built or run yet, so treat it as untested.
+- **Copy the folder:** copy `data\` from another PC by USB or a shared drive. It is roughly 40 MB.
+- **Through the dashboard:** once the app is running, open the **Data** menu in the header and upload the four CSVs one table at a time. This is also how you would load the HCLTech data pack.
