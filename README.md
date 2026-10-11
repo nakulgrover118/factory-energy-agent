@@ -4,10 +4,10 @@ The factory's electricity bill rose 15%. This system says **why**, **what the fa
 
 - It splits the rise into tariff, volume, product mix, weather and new waste. The parts add up to the total, and each comes with a range.
 - It finds controllable waste from the meter data, with evidence: a compressed-air leak, hall lights left on overnight, HVAC running on Sundays.
-- It turns each waste pattern into an action with yearly ₹, kWh and CO2e savings, an implementation cost and a payback, each as a range. Actions are ranked, and a manager approves them.
+- It turns each waste pattern into an action with yearly ₹, kWh and CO2e savings, each as a range. Actions are ranked by ease, then saving, and a manager approves them. No payback is given: the data has no implementation costs, and the system says so rather than assume them.
 - It answers questions in plain words, quoting only numbers the tools computed. When the data cannot answer, it says so.
 
-On the bundled sample, it explains the 15.03% rise as 12.98 points outside the factory's control and 2.05 points of new waste (a compressor leak that started on 20 July). It finds ₹19–23 lakh a year of savings for ₹1.7–3.5 lakh of work; the first action pays back in under a month.
+On the bundled sample, it explains the 15.03% rise as 12.98 points outside the factory's control and 2.05 points of new waste (a compressor leak that started on 20 July). It finds ₹19–23 lakh a year of savings across three easy actions.
 
 HCLTech Future Ready AI Engineer Hackathon, Factory Energy track.
 
@@ -36,11 +36,11 @@ The dashboard opens on the answer; nothing needs typing.
 
 | Tab | What it shows |
 | --- | --- |
-| **Overview** | Headline figures (bill, points outside our control, new waste, savings found, fastest payback). The bill-bridge chart: blue causes are outside the factory's control, the orange one is controllable. Also a short brief written by the LLM from verified figures, and the top three actions. |
+| **Overview** | Headline figures (bill, points outside our control, new waste, savings found, CO2e avoidable). The bill-bridge chart: blue causes are outside the factory's control, the orange one is controllable. Also a short brief written by the LLM from verified figures, and the top three actions. |
 | **Ask a question** | Plain-language questions, with suggested ones. Each answer shows its type, the right chart, its assumptions and limits, and "how this was worked out" (the trace). |
-| **Savings plan** | Every action ranked by payback, with ₹, kWh, CO2e, cost, evidence and **Approve / Reject** buttons. |
+| **Savings plan** | Every action ranked by ease, then saving, with ₹, kWh, CO2e, evidence and **Approve / Reject** buttons. |
 | **Where the energy goes** | Energy by asset and daily cost (tariff rise marked). For each asset: its average day against the level it should drop to outside the shift, a weekday × hour heatmap, and night load day by day (the leak's start is marked). |
-| **Data and checks** | The six validation checks, what cleaning changed, file upload, one-click **Apply the late data drop**, and the load history. |
+| **Data** (menu in the header) | The six validation checks, what cleaning changed, file upload, and one-click **Apply the late data drop**. |
 
 After new data loads, a banner says what moved. For the late drop: *"The bill rise moved from 15.44% to 15.03% (tariff −0.41 pts)"*, and line_2 reads 7.4% less after recalibration.
 
@@ -118,7 +118,7 @@ The same file twice changes nothing. A meter with more than 5% missing intervals
 8. **Waste with evidence.**
    - *New waste:* a sub-meter whose night load steps up and stays up (the leak, from 20 July).
    - *Off-hours waste:* load at night, or during shift hours on Sundays and holidays, above what that kind of asset needs (an assumed benchmark share of its shift load).
-9. **Savings.** Avoidable kW × the hours it runs per year × the tariff in that window, with low and high values, plus an assumed implementation cost. Payback is cost ÷ saving. Actions are ranked by payback, then ease.
+9. **Savings.** Avoidable kW × the hours it runs per year × the tariff in that window, with low and high values. Actions are ranked by ease, then by yearly saving. Payback is not computed because the data has no implementation costs; a payback question gets that answer, not a guess.
 
 ## Evaluation
 
@@ -175,7 +175,7 @@ Haiku is the default. It matched Sonnet's accuracy, and the number check never h
 - Peak hours come from the tariff's `start_hour`/`end_hour` columns (extra columns are allowed by Annex B); without them, peak is 06:00–22:00.
 - The shift is 06:00–22:00 (`SHIFT_HOURS`). A day is a working day only if units were produced and it is not a holiday.
 - Emission factor: 0.71 kg CO2e per kWh, read from the data card (an assumed grid average).
-- Implementation costs and the expected off-hours load of each kind of asset are stated rules of thumb (`ACTION_LIBRARY` and `OFF_HOURS_BENCHMARK` in `analytics.py`). The data has no cost table.
+- The expected off-hours load of each kind of asset and each action's ease are stated rules of thumb (`OFF_HOURS_BENCHMARK` and `ACTION_LIBRARY` in `analytics.py`). The data has no cost table, so no cost or payback is given.
 
 ## Limitations
 

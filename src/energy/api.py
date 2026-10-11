@@ -55,8 +55,6 @@ class Recommendation(BaseModel):
     saving_kwh_per_year: list[float]
     saving_money_per_year: list[float]
     saving_co2e_t_per_year: list[float]
-    payback_months: list[float | None]
-    implementation_cost: list[float]
     ease: str
     action_key: str
     approval: dict[str, Any] = {}
@@ -80,7 +78,7 @@ class Decision(BaseModel):
 
 def _recommendation(a: dict) -> dict:
     keys = ("rank", "action", "asset", "rationale", "evidence_refs", "confidence", "requires_approval", "ease", "saving_kwh_per_year",
-            "saving_money_per_year", "saving_co2e_t_per_year", "payback_months", "implementation_cost", "action_key", "approval")
+            "saving_money_per_year", "saving_co2e_t_per_year", "action_key", "approval")
     return {**{k: a[k] for k in keys},
             "estimated_impact": (f"Saves {a['saving_kwh_per_year'][0]:,} to {a['saving_kwh_per_year'][1]:,} kWh and "
                                  f"{a['saving_money_per_year'][0]:,} to {a['saving_money_per_year'][1]:,} {ws.currency()} a year")}

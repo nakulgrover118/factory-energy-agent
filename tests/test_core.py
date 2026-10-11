@@ -91,15 +91,16 @@ def test_every_planted_waste_is_found_and_its_saving_is_inside_the_range(waste_s
     assert set(found) == {w["asset"] for w in truth["after_late_drop"]["planted_waste"]}
 
 
-def test_actions_are_ranked_by_payback_and_need_approval(waste_set):
+def test_actions_are_ranked_by_ease_then_saving_and_need_approval(waste_set):
     frames, meters, *_ = _run(waste_set[0])
     leaks = an.detect_leaks(meters, frames, PERIOD, REF)
     actions = an.estimate_savings(an.off_hours_waste(meters, frames, PERIOD, leaks), leaks, meters, frames, 0.71)
-    paybacks = [a["payback_months"][1] for a in actions]
-    assert paybacks == sorted(paybacks) and [a["rank"] for a in actions] == list(range(1, len(actions) + 1))
+    order = [(an.EASE_RANK[a["ease"]], -a["saving_money_per_year"][1]) for a in actions]
+    assert order == sorted(order) and [a["rank"] for a in actions] == list(range(1, len(actions) + 1))
+    assert all("payback_months" not in a for a in actions)
     for a in actions:
         assert a["requires_approval"] is True and a["evidence_refs"]
-        for k in ("saving_kwh_per_year", "saving_money_per_year", "saving_co2e_t_per_year", "payback_months"):
+        for k in ("saving_kwh_per_year", "saving_money_per_year", "saving_co2e_t_per_year"):
             assert a[k][0] <= a[k][1]
 
 

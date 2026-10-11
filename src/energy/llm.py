@@ -104,7 +104,8 @@ intent, choose one:
 - changes: what changed after new or corrected data was loaded (the late data drop).
 - out_of_scope: forecasts or future prices, other sites, hypothetical changes in production volume, weather or mix, or anything else not answerable from the data.
 - refuse: only when it explicitly asks to invent, guess or make up a number, skip checks, or approve an action.
-- unclear: too vague to act on.
+- unclear: only when no intent above fits at all. When in doubt, pick the closest intent: any question about why or how
+  a cause (tariff, weather, volume, mix, waste) affected the bill is bridge with focus_cause.
 
 Fields:
 - period, compare_to: quarters as YYYY-Qn when the question names them, else null.
@@ -114,7 +115,7 @@ Fields:
 - rise_kept: for what_if_tariff about the price rise itself, the share of the rise kept (no rise -> 0, half the rise -> 0.5), else null.
 - focus_cause: for bridge, the one cause the question asks about (tariff, volume, product_mix, weather, waste), else null.
 - stated_change_pct: only when the question states how much the bill changed (for example "up 15%" -> 15), else null.
-- clarification: when intent is unclear, one short question to ask back, else null."""
+- clarification: only when intent is unclear, one short question to ask back, else null."""
 
 
 def route(question: str, meters: list[str], quarters: list[str]) -> dict:

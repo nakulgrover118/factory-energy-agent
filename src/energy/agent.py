@@ -156,9 +156,9 @@ def keyword_route(question: str, meters: list[str], quarters: list[str] | None =
         return "top_users", params
     if asset and has(ENERGY) and not has(r"\bwhy\b"):
         return "meter_query", {**params, "asset": asset}
-    if has(BRIDGE) or "compare_to" in params:
+    if has(BRIDGE) or "compare_to" in params or any(has(pat) for _, pat in FOCUS[:4]):
         m = re.search(r"(\d+(?:\.\d+)?)\s*(%|per ?cent)", q)
-        focus = next((c for c, pat in FOCUS if has(pat)), None) if has(r"\b(how much|contribut|due to|because of|share|part)") else None
+        focus = next((c for c, pat in FOCUS if has(pat)), None)
         return "bridge", {**params, **({"stated_change_pct": float(m.group(1))} if m else {}), **({"focus_cause": focus} if focus else {})}
     return "unclear", params
 
@@ -179,11 +179,11 @@ def _numbers(obj: Any) -> list[float]:
     return []
 
 
-_NOT_FIGURES = r"\d{4}-\d{2}-\d{2}|\d{4}-Q\d|\bQ\d\b|\d{1,2}:\d{2}|\b\d{2}-\d{2}h\b|line_\d|line \d"
+_NOT_FIGURES = r"\d{4}-\d{2}-\d{2}|\d{4}-Q\d|\bQ\d\b|\d{1,2}:\d{2}|\b\d{2}-\d{2}h\b|line_\d|line \d|\b20\d\d\b(?![.,]?\d)|\b\d{1,2}(st|nd|rd|th)?\s+(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*|(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s+\d{1,2}\b"  # dates, times, years
 
 
 def _text_numbers(text: str) -> list[float]:
-    text = re.sub(_NOT_FIGURES, " ", text)
+    text = re.sub(_NOT_FIGURES, " ", text, flags=re.IGNORECASE)
     return [float(m.replace(",", "")) for m in re.findall(r"(?<![\w.])\d[\d,]*(?:\.\d+)?", text)]
 
 
@@ -191,7 +191,7 @@ def unmatched_numbers(text: str, facts: Any) -> list[str]:
     """Numbers in the text that no tool produced. A text number matches a fact when the fact,
     rounded to the precision shown in the text, equals it (sign ignored)."""
     allowed = [abs(n) for n in _numbers(facts)]
-    cleaned = re.sub(_NOT_FIGURES, " ", text)
+    cleaned = re.sub(_NOT_FIGURES, " ", text, flags=re.IGNORECASE)
     bad = []
     for token in re.findall(r"(?<![\w.])\d[\d,]*(?:\.\d+)?", cleaned):
         raw = token.replace(",", "").rstrip(".")
@@ -284,12 +284,15 @@ def build_graph(ws: Workspace):
                         params.pop("stated_change_pct", None)
                     if intent == "unclear" and params.get("clarification"):
                         params["ask"] = params.pop("clarification")
+                    params.pop("clarification", None)
             if intent is None:
                 intent, params = keyword_route(question, meters, quarters)
                 used = "keywords" if not info else "keywords (LLM unavailable)"
             else:  # deterministic guards win over the model where the wording is unambiguous
                 kw_intent, kw_params = keyword_route(question, meters, quarters)
-                if ((kw_intent == "out_of_scope" and kw_params.get("note"))
+                if intent == "unclear" and kw_intent != "unclear":  # be helpful: answer the closest question
+                    intent, params, used = kw_intent, kw_params, "llm + guard"
+                elif ((kw_intent == "out_of_scope" and kw_params.get("note"))
                         or (intent == "refuse" and kw_intent == "asset_check")
                         or (intent == "what_if_tariff" and kw_intent != "what_if_tariff")  # no scenario stated: ask, don't guess
                         or (intent == "idle" and kw_intent == "recommend" and re.search(r"\bleak", question.lower()))):
@@ -297,6 +300,8 @@ def build_graph(ws: Workspace):
                 if intent in ("asset_check", "recommend", "what_if_actions", "idle", "meter_query") and not params.get("asset") \
                         and kw_params.get("asset"):
                     params["asset"] = kw_params["asset"]
+                if intent == "bridge" and kw_params.get("focus_cause") and not params.get("focus_cause"):
+                    params["focus_cause"] = kw_params["focus_cause"]
                 for k in ("period", "compare_to"):
                     if kw_params.get(k) and not params.get(k):
                         params[k] = kw_params[k]
@@ -348,7 +353,7 @@ def build_graph(ws: Workspace):
             factor, source = ws.emission_factor()
             inp["emission_factor"] = factor
             out = {"actions": ws.actions(period, compare), "emission_factor_source": source}
-            brief = [{"rank": a["rank"], "action": a["action"], "payback_months": a["payback_months"],
+            brief = [{"rank": a["rank"], "action": a["action"], "ease": a["ease"],
                       "saving_money_per_year": a["saving_money_per_year"]} for a in out["actions"]]
         elif name == "check_asset":
             inp["asset"] = params["asset"]
@@ -427,7 +432,7 @@ def build_graph(ws: Workspace):
                 if any(not (x["range"][0] <= x["pct_points"] <= x["range"][1]) for x in b["bridge"]):
                     problems.append("a point estimate lies outside its range")
         for a in res.get("estimate_savings", {}).get("actions", []):
-            keys = ("saving_kwh_per_year", "saving_money_per_year", "saving_co2e_t_per_year", "payback_months")
+            keys = ("saving_kwh_per_year", "saving_money_per_year", "saving_co2e_t_per_year")
             if any(a[k][0] is None or a[k][0] > a[k][1] for k in keys) or not a["evidence_refs"] or a["requires_approval"] is not True:
                 problems.append(f"action '{a['action']}' has an invalid range, no evidence or no approval flag")
         if res.get("compare_data_versions", {}).get("status") == "no_change":
@@ -475,10 +480,10 @@ def build_graph(ws: Workspace):
         if actions:
             factor, source = ws.emission_factor()
             assumptions += [f"Emission factor {factor} kg CO2e per kWh ({source})",
-                            "Implementation costs are assumed ranges; the data has no cost table",
+                            "No payback is given: the data has no implementation costs",
                             "Expected off-hours load per asset type is an engineering rule of thumb"]
             facts["actions"] = [{k: a[k] for k in ("rank", "action", "asset", "saving_kwh_per_year", "saving_money_per_year",
-                                                   "saving_co2e_t_per_year", "payback_months", "implementation_cost", "ease", "rationale")}
+                                                   "saving_co2e_t_per_year", "ease", "rationale")}
                                 for a in actions]
             facts["savings_total"] = an.savings_summary(actions)
 
@@ -506,6 +511,21 @@ def build_graph(ws: Workspace):
                 facts["focus_share_pct"] = share
                 lead += (f"{CAUSE_LABEL[focus].capitalize()} added {fx['pct_points']:.2f} points ({fx['range'][0]:.2f} to {fx['range'][1]:.2f}), "
                          f"about {share}% of the rise. ")
+                dv = b.get("drivers", {})
+                facts["drivers"] = dv
+                why = {
+                    "weather": lambda: (f"It was hotter: cooling degree-days on working days went from {dv['cooling_degree_days_reference']:g} "
+                                        f"to {dv['cooling_degree_days_current']:g} ({dv['cooling_degree_days_change_pct']:+g}%), so more energy went "
+                                        f"into cooling. "),
+                    "tariff": lambda: (f"The average price paid rose from {dv['avg_price_reference']} to {dv['avg_price_current']} per kWh; "
+                                       f"at the old tariff it would have been {dv['avg_price_current_at_old_tariff']}. "),
+                    "volume": lambda: (f"Output went from {dv['units_reference']:,} to {dv['units_current']:,} units ({dv['units_change_pct']:+g}%), "
+                                       f"over {dv['working_days_current']} working days instead of {dv['working_days_reference']}. "),
+                    "product_mix": lambda: (f"The mix moved towards energy-hungry products: the expected energy cost per unit rose from "
+                                            f"{dv['cost_per_unit_reference']} to {dv['cost_per_unit_current']}, with no waste involved. "),
+                }.get(focus)
+                if why and dv:
+                    lead += why()
             text = (f"{lead}The bill {direction} {abs(b['total_change_pct']):.2f}% from {compare} to {period} "
                     f"({fm.money(b['bill_reference'])} to {fm.money(b['bill_current'])}). "
                     f"{b['uncontrollable_pct_points']:.2f} points are outside the factory's control: {parts}. ")
@@ -544,7 +564,7 @@ def build_graph(ws: Workspace):
             elif actions:
                 s = facts["savings_total"]
                 text += (f" Fixing the {len(actions)} waste patterns found would save {fm.money_range(s['saving_money_per_year'])} a year; "
-                         f"the first pays back in {actions[0]['payback_months'][0]}-{actions[0]['payback_months'][1]} months. Actions need a manager's approval.")
+                         f"the easiest and biggest first is to {actions[0]['action'][0].lower() + actions[0]['action'][1:].split(' (')[0]}. Actions need a manager's approval.")
             assumptions += b["assumptions"]
             limitations += [f"Baseline fit R2 {b['baseline']['r2']} on {compare}; ranges cover fit error only, not a wrong model form"]
         elif intent == "recommend":
@@ -555,13 +575,15 @@ def build_graph(ws: Workspace):
                         f"No waste pattern was found on {label(params['asset'])}. ")
             if actions:
                 s = facts["savings_total"]
-                lines = [f"{a['rank']}. {a['action']}: {fm.money_range(a['saving_money_per_year'])} a year, payback "
-                         f"{a['payback_months'][0]}-{a['payback_months'][1]} months ({a['ease']})" for a in actions[:3]]
+                lines = [f"{a['rank']}. {a['action']}: {fm.money_range(a['saving_money_per_year'])} a year ({a['ease']})" for a in actions[:3]]
                 text = (f"{lead}{len(actions)} actions would save {fm.money_range(s['saving_money_per_year'])} a year "
                         f"({fm.num(s['saving_kwh_per_year'][0] / 1000)}-{fm.num(s['saving_kwh_per_year'][1] / 1000)} MWh, "
-                        f"{s['saving_co2e_t_per_year'][0]}-{s['saving_co2e_t_per_year'][1]} t CO2e) for {fm.money_range(s['implementation_cost'])} of work. "
-                        f"Ranked by payback: " + "; ".join(lines) + ". Each is a suggestion for a manager to approve.")
-                limitations.append("Payback depends on the assumed implementation costs")
+                        f"{s['saving_co2e_t_per_year'][0]}-{s['saving_co2e_t_per_year'][1]} t CO2e). "
+                        f"Ranked by ease, then saving: " + "; ".join(lines) + ". Each is a suggestion for a manager to approve.")
+                if re.search(r"pay ?back|pays back|return on|roi\b", state["question"].lower()):
+                    text = ("Payback cannot be computed: the data has no implementation costs, so no cost or payback figure is given. "
+                            + text)
+                limitations.append("No payback: the data has no implementation costs")
             else:
                 text = (f"{lead}No controllable waste pattern was found in {period}, so no action is recommended. Tariff, volume, mix and "
                         f"weather are not things the factory can fix this way.")
@@ -656,6 +678,8 @@ def build_graph(ws: Workspace):
                 upd["llm_errors"] = state.get("llm_errors", []) + [f"brief: {r['error']}"]
             if r["text"]:
                 upd["summary"], used = r["text"], "llm"
+                if text.startswith("Payback cannot be computed") and not r["text"].lower().startswith("payback cannot"):
+                    upd["summary"] = text.split(". ", 1)[0] + ". " + r["text"]  # never drop the no-payback statement
                 upd["facts"] = {**facts, "_template": text}
         upd["steps"] = step(state, "writer", "write_finance_brief", {"writer": used, **info}, {"answer_type": answer_type})
         return upd
