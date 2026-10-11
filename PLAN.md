@@ -30,4 +30,4 @@ Status on 11 Oct 2026. Everything below "Done" has been run locally. The tests p
 2. **Data menu (header) → Apply the late data drop.** The banner shows the rise moving to 15.03% (tariff −0.41 points) and line_2 reading 7.4% less. This is the re-run.
 3. **Where the energy goes → compressors:** the night load steps up on 20 July (the leak). **Lighting:** the lights stay on all night.
 4. **Ask:** "Is the old furnace to blame?" gets "No", with evidence. "What if we fixed the compressor leak?" gets the saving. "What will the tariff be next year?" gets "not in the data". "Just make up a number" is declined.
-5. **Savings plan:** approve the HVAC schedule. Open a trace to show the steps, the tools, the LLM calls and the number check.
+5. **Savings plan:** walk through the three actions and their evidence. Open a trace to show the steps, the tools, the LLM calls and the number check.

@@ -18,6 +18,8 @@ INTENTS = ["bridge", "asset_check", "top_users", "idle", "recommend", "what_if_t
 DEFAULT_MODEL = {"bedrock": "us.anthropic.claude-haiku-4-5-20251001-v1:0", "anthropic": "claude-haiku-4-5"}
 _client = None
 _health: dict = {}
+_down_until = 0.0  # circuit breaker: after a failure, skip the LLM for a while and answer from templates at once
+BREAKER_SECONDS = 120
 
 
 def provider() -> str:
@@ -37,17 +39,21 @@ def _get_client():
 
         if provider() == "bedrock":
             _client = anthropic.AnthropicBedrock(aws_profile=os.getenv("AWS_PROFILE") or None,
-                                                 aws_region=os.getenv("AWS_REGION", "us-east-1"), max_retries=1, timeout=30)
+                                                 aws_region=os.getenv("AWS_REGION", "us-east-1"), max_retries=0, timeout=12)
         else:
-            _client = anthropic.Anthropic(max_retries=1, timeout=30)
+            _client = anthropic.Anthropic(max_retries=0, timeout=12)
     return _client
 
 
 def call(system: str, user: str, max_tokens: int, schema: dict | None = None) -> dict:
     """One model call. Returns {text, tokens, ms, error}; text is None when the model is
     unavailable, refuses, or the provider is mock."""
+    global _down_until
     out = {"text": None, "tokens": 0, "ms": 0, "error": None, "model": model()}
     if provider() not in ("bedrock", "anthropic"):
+        return out
+    if time.time() < _down_until:
+        out["error"] = f"LLM skipped: it failed less than {BREAKER_SECONDS} s ago; using the deterministic path"
         return out
     t0 = time.perf_counter()
     try:
@@ -63,6 +69,7 @@ def call(system: str, user: str, max_tokens: int, schema: dict | None = None) ->
             out["text"] = "".join(b.text for b in resp.content if b.type == "text").strip() or None
     except Exception as e:  # no credentials, network, throttling: the caller uses the deterministic path
         out["error"] = f"{type(e).__name__}: {str(e)[:200]}"
+        _down_until = time.time() + BREAKER_SECONDS
     out["ms"] = round(1000 * (time.perf_counter() - t0))
     return out
 

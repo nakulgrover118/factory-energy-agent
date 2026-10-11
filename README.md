@@ -38,7 +38,7 @@ The dashboard opens on the answer; nothing needs typing.
 | --- | --- |
 | **Overview** | Headline figures (bill, points outside our control, new waste, savings found, CO2e avoidable). The bill-bridge chart: blue causes are outside the factory's control, the orange one is controllable. Also a short brief written by the LLM from verified figures, and the top three actions. |
 | **Ask a question** | Plain-language questions, with suggested ones. Each answer shows its type, the right chart, its assumptions and limits, and "how this was worked out" (the trace). |
-| **Savings plan** | Every action ranked by ease, then saving, with ₹, kWh, CO2e, evidence and **Approve / Reject** buttons. |
+| **Savings plan** | Every action ranked by ease, then saving, with ₹, kWh, CO2e, confidence and evidence. |
 | **Where the energy goes** | Energy by asset and daily cost (tariff rise marked). For each asset: its average day against the level it should drop to outside the shift, a weekday × hour heatmap, and night load day by day (the leak's start is marked). |
 | **Data** (menu in the header) | The six validation checks, what cleaning changed, file upload, and one-click **Apply the late data drop**. |
 

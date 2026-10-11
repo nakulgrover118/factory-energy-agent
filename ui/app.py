@@ -186,6 +186,41 @@ with tab_overview:
             else:
                 st.success("No controllable waste pattern was found. The rise is explained by causes outside the factory's control.")
 
+        # what each part of the bridge means, with the data behind it and this quarter's change
+        st.subheader("What each part means")
+        dv = b.get("drivers", {})
+        pts = {x["cause"]: x["pct_points"] for x in b["bridge"]}
+        sym = "₹" if cur == "INR" else ""
+        nw = data["new_waste"][0] if data["new_waste"] else None
+        parts = [
+            ("tariff", "Tariff (price)", "The price per kWh changed. Same energy, bigger bill.",
+             "tariff.csv: price per kWh by time of day, applied to every 15-minute reading",
+             f"Average price {sym}{dv.get('avg_price_reference', 0):.2f} → {sym}{dv.get('avg_price_current', 0):.2f} per kWh"),
+            ("volume", "Volume", "The factory made more (or ran more days), so it used more energy.",
+             "production.csv: units made per day, and which days were working days",
+             f"{dv.get('units_reference', 0):,} → {dv.get('units_current', 0):,} units ({dv.get('units_change_pct') or 0:+g}%)"),
+            ("product_mix", "Product mix", "More of the products that need more energy per unit. Not waste.",
+             "production.csv: units per product per day; energy per unit learned from last quarter",
+             f"Expected cost per unit {sym}{dv.get('cost_per_unit_reference', 0):.2f} → {sym}{dv.get('cost_per_unit_current', 0):.2f}"),
+            ("weather", "Weather", "Hotter days need more cooling.",
+             "weather.csv: daily cooling degree-days (how far the temperature was above 22 °C)",
+             f"Cooling degree-days {dv.get('cooling_degree_days_reference', 0):g} → {dv.get('cooling_degree_days_current', 0):g} "
+             f"({dv.get('cooling_degree_days_change_pct') or 0:+g}%)"),
+            ("waste", "New waste", "Energy the four causes above don't explain. The only part the factory can fix.",
+             "meter_15min.csv: 15-minute readings per sub-meter, checked at night and on non-working days",
+             f"{nw['asset']}: night load {nw['reference_night_kw']} → {round(nw['reference_night_kw'] + nw['excess_kw'], 1)} kW from {nw['from']}"
+             if nw else "No meter shows a new waste pattern"),
+        ]
+        cols = st.columns(5)
+        for col, (cause, title, meaning, source, change) in zip(cols, parts):
+            with col.container(border=True):
+                color = "#eb6834" if cause == "waste" else "#2a78d6"
+                st.markdown(f'<div style="border-left:3px solid {color};padding-left:8px"><b>{title}</b> '
+                            f'<span class="muted">{pts.get(cause, 0):+.2f} pts</span></div>', unsafe_allow_html=True)
+                st.markdown(f'<div style="font-size:0.9rem;margin:6px 0">{meaning}</div>'
+                            f'<div style="font-size:0.88rem;font-weight:600;margin-bottom:6px">{change}</div>'
+                            f'<div class="muted" style="font-size:0.78rem">Data: {source}</div>', unsafe_allow_html=True)
+
 
 # ---- ask ---------------------------------------------------------------------------------------
 
@@ -266,34 +301,16 @@ with tab_plan:
         st.plotly_chart(ch.savings(acts, cur), config={"displayModeBar": False}, width="stretch")
         for a in acts:
             with st.container(border=True):
-                head, side = st.columns([4, 1], vertical_alignment="center")
-                with head:
-                    st.markdown(f'<div class="action-title">{a["rank"]}. {a["action"]}</div>', unsafe_allow_html=True)
-                    row = st.container(horizontal=True, gap="small")
-                    row.badge(f"{ch.money_range(a['saving_money_per_year'], cur)} a year", color="green")
-                    row.badge(f"{a['saving_kwh_per_year'][0] / 1000:,.0f}–{a['saving_kwh_per_year'][1] / 1000:,.0f} MWh", color="blue")
-                    row.badge(f"{a['saving_co2e_t_per_year'][0]}–{a['saving_co2e_t_per_year'][1]} t CO2e", color="gray")
-                    row.badge(f"ease: {a['ease']}", color="gray")
-                    row.badge(f"confidence: {a['confidence']}", color="gray")
-                    st.markdown(f"<span class='muted'>{a['rationale']} "
-                                f"Evidence: {', '.join(a['evidence_refs'])}</span>", unsafe_allow_html=True)
-                with side:
-                    decision = a["approval"].get("decision", "pending")
-                    if decision == "pending":
-                        c1, c2 = st.columns(2)
-                        if c1.button("Approve", key=f"ok_{a['action_key']}", type="primary", width="stretch"):
-                            call("POST", f"/actions/{a['action_key']}/decision", json={"decision": "approved"})
-                            refresh()
-                        if c2.button("Reject", key=f"no_{a['action_key']}", width="stretch"):
-                            call("POST", f"/actions/{a['action_key']}/decision", json={"decision": "rejected"})
-                            refresh()
-                    else:
-                        st.badge(decision.capitalize(), color="green" if decision == "approved" else "red",
-                                 icon=":material/check:" if decision == "approved" else ":material/close:")
-                        if st.button("Undo", key=f"undo_{a['action_key']}"):
-                            call("POST", f"/actions/{a['action_key']}/decision", json={"decision": "pending"})
-                            refresh()
-        st.caption("Actions are suggestions. A manager approves them; the decision is recorded with the data version.")
+                st.markdown(f'<div class="action-title">{a["rank"]}. {a["action"]}</div>', unsafe_allow_html=True)
+                row = st.container(horizontal=True, gap="small")
+                row.badge(f"{ch.money_range(a['saving_money_per_year'], cur)} a year", color="green")
+                row.badge(f"{a['saving_kwh_per_year'][0] / 1000:,.0f}–{a['saving_kwh_per_year'][1] / 1000:,.0f} MWh", color="blue")
+                row.badge(f"{a['saving_co2e_t_per_year'][0]}–{a['saving_co2e_t_per_year'][1]} t CO2e", color="gray")
+                row.badge(f"ease: {a['ease']}", color="gray")
+                row.badge(f"confidence: {a['confidence']}", color="gray")
+                st.markdown(f"<span class='muted'>{a['rationale']} "
+                            f"Evidence: {', '.join(a['evidence_refs'])}</span>", unsafe_allow_html=True)
+        st.caption("Actions are suggestions for a manager to approve.")
 
 
 # ---- where the energy goes -------------------------------------------------------------------------
