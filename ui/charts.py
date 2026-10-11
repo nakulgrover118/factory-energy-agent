@@ -79,15 +79,14 @@ def bridge(b: dict, currency: str, height: int = 400) -> go.Figure:
 
 
 def savings(actions: list[dict], currency: str) -> go.Figure:
-    """Saving range per action (low to high), ranked by payback, fastest at the top."""
+    """Saving range per action (low to high), in ranked order, first at the top."""
     acts = list(reversed(actions))
     names = [f"#{a['rank']} {a['action'].split(' (')[0]}" for a in acts]
     lo = [a["saving_money_per_year"][0] for a in acts]
     hi = [a["saving_money_per_year"][1] for a in acts]
     fig = go.Figure(go.Bar(
         y=names, x=[h - l for l, h in zip(lo, hi)], base=lo, orientation="h", marker=dict(color=BLUE, cornerradius=4), width=0.5,
-        text=[f"{money_range(a['saving_money_per_year'], currency)} · payback {a['payback_months'][0]}–{a['payback_months'][1]} mo"
-              for a in acts], textposition="outside", textfont=dict(color=INK, size=12), cliponaxis=False,
+        text=[f"{money_range(a['saving_money_per_year'], currency)} a year · {a['ease']}" for a in acts], textposition="outside", textfont=dict(color=INK, size=12), cliponaxis=False,
         hovertemplate=[f"<b>{a['action']}</b><br>{money_range(a['saving_money_per_year'], currency)} a year<br>"
                        f"{a['saving_kwh_per_year'][0]:,}–{a['saving_kwh_per_year'][1]:,} kWh · "
                        f"{a['saving_co2e_t_per_year'][0]}–{a['saving_co2e_t_per_year'][1]} t CO2e<extra></extra>" for a in acts]))

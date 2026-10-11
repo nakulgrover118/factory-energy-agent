@@ -29,21 +29,16 @@ OFF_HOURS_BENCHMARK = {
 }
 DEFAULT_BENCHMARK = (0.10, 0.30)
 
-# What to do about off-hours load on each kind of asset. Costs are assumed ranges in the data
-# currency; the data pack has no cost table, so payback is only as good as these numbers.
+# What to do about off-hours load on each kind of asset, and how easy it is. The data has no
+# implementation costs, so no payback is computed; actions are ranked by ease, then by saving.
 ACTION_LIBRARY = {
-    "compressors": {"action": "Find and fix compressed-air leaks (ultrasonic leak survey)",
-                    "cost": (40_000, 80_000), "ease": "easy", "always_on": True},
-    "lighting": {"action": "Switch hall lighting off after the last shift (timers or occupancy sensors)",
-                 "cost": (120_000, 250_000), "ease": "easy"},
-    "hvac": {"action": "Schedule HVAC off on non-working days (BMS time schedule)",
-             "cost": (10_000, 25_000), "ease": "easy"},
-    "line": {"action": "Power down {asset} standby loads between shifts",
-             "cost": (20_000, 50_000), "ease": "easy"},
-    "furnace": {"action": "Review furnace holding temperature and idle schedule",
-                "cost": (50_000, 150_000), "ease": "medium"},
+    "compressors": {"action": "Find and fix compressed-air leaks (ultrasonic leak survey)", "ease": "easy", "always_on": True},
+    "lighting": {"action": "Switch hall lighting off after the last shift (timers or occupancy sensors)", "ease": "easy"},
+    "hvac": {"action": "Schedule HVAC off on non-working days (BMS time schedule)", "ease": "easy"},
+    "line": {"action": "Power down {asset} standby loads between shifts", "ease": "easy"},
+    "furnace": {"action": "Review furnace holding temperature and idle schedule", "ease": "medium"},
 }
-DEFAULT_ACTION = {"action": "Investigate off-hours load on {asset}", "cost": (25_000, 75_000), "ease": "medium"}
+DEFAULT_ACTION = {"action": "Investigate off-hours load on {asset}", "ease": "medium"}
 EASE_RANK = {"easy": 0, "medium": 1, "hard": 2}
 DISPLAY_NAME = {"hvac": "HVAC", "compressors": "compressor"}
 
@@ -166,6 +161,24 @@ def _bridge_amounts(ref: pd.DataFrame, cur: pd.DataFrame, unit_cols: list[str], 
     return {"amounts": amounts, "fit": fit, "c0": c0, "c1": c1}
 
 
+def _drivers(ref: pd.DataFrame, cur: pd.DataFrame, unit_cols: list[str], fit: dict) -> dict:
+    """The plain facts behind each cause: price paid, output, cooling need, cost per unit."""
+    pct = lambda a, b: round(100 * (b - a) / a, 1) if a else None
+    u0, u1 = float(ref[unit_cols].sum().sum()), float(cur[unit_cols].sum().sum())
+    k = {c: fit["beta"][c] for c in unit_cols}
+    per_unit = lambda d: sum(k[c] * float(d[c].sum()) for c in unit_cols) / max(float(d[unit_cols].sum().sum()), 1.0)
+    cdd0, cdd1 = float(ref["cdd"].sum()), float(cur["cdd"].sum())
+    price0, price1 = float(ref["cost"].sum() / ref["kwh"].sum()), float(cur["cost"].sum() / cur["kwh"].sum())
+    price1_old = float(cur["cost_ref"].sum() / cur["kwh"].sum())
+    return {"avg_price_reference": round(price0, 2), "avg_price_current": round(price1, 2),
+            "avg_price_current_at_old_tariff": round(price1_old, 2),
+            "units_reference": round(u0), "units_current": round(u1), "units_change_pct": pct(u0, u1),
+            "working_days_reference": int(ref["work"].sum()), "working_days_current": int(cur["work"].sum()),
+            "cooling_degree_days_reference": round(cdd0, 1), "cooling_degree_days_current": round(cdd1, 1),
+            "cooling_degree_days_change_pct": pct(cdd0, cdd1),
+            "cost_per_unit_reference": round(per_unit(ref), 2), "cost_per_unit_current": round(per_unit(cur), 2)}
+
+
 def decompose(daily: pd.DataFrame, period: str, compare_to: str, model: str = "ols",
               n_boot: int = 200, seed: int = 0) -> dict:
     """Split the bill change between two quarters into five causes that add up to the total."""
@@ -204,6 +217,7 @@ def decompose(daily: pd.DataFrame, period: str, compare_to: str, model: str = "o
             "total_change_pct": round(total, 2), "bridge": bridge,
             "uncontrollable_pct_points": round(sum(b["pct_points"] for b in bridge if b["cause"] != "waste"), 2),
             "waste_confirmed": waste["range"][0] > 0,
+            "drivers": _drivers(ref, cur, unit_cols, fit),
             "baseline": {"model": model, "r2": round(fit["r2"], 4), "coefficients": {k: round(v, 4) for k, v in fit["beta"].items()},
                          "target": "daily cost at reference-quarter prices", "trained_on": compare_to},
             "assumptions": ["reference-quarter tariff schedule is the 'old' price for every interval",
@@ -365,7 +379,7 @@ def _window_price(frames: dict, latest: pd.Timestamp, window: str) -> float:
 
 def estimate_savings(findings: list[dict], leaks: list[dict], meters: pd.DataFrame, frames: dict,
                      emission_factor: float) -> list[dict]:
-    """Turn each waste finding into an action with ranges, ranked by payback then ease."""
+    """Turn each waste finding into an action with ranges, ranked by ease, then by the yearly saving."""
     latest = meters.index.max()
     new_waste = {l["asset"]: l for l in leaks}
     actions = []
@@ -374,8 +388,6 @@ def estimate_savings(findings: list[dict], leaks: list[dict], meters: pd.DataFra
         price = _window_price(frames, latest, f["window"])
         kwh = f["excess_kwh_per_year"]
         money = [round(k * price) for k in kwh]
-        cost = lib["cost"]
-        payback = [round(12 * cost[0] / money[1], 1), round(12 * cost[1] / money[0], 1)] if money[0] > 0 else [None, None]
         name = DISPLAY_NAME.get(f["asset"], f["asset"].replace("_", " "))
         rationale = (f"{name[0].upper() + name[1:]} load is {f['off_hours_kw']} kW {('around the clock' if f['when'] == '24/7' else 'during ' + f['when'])}, "
                      f"{round(100 * f['off_hours_share'])}% of its load during the shift, where at most about "
@@ -388,15 +400,14 @@ def estimate_savings(findings: list[dict], leaks: list[dict], meters: pd.DataFra
             "action": lib["action"].format(asset=f["asset"].replace("_", " ")), "asset": f["asset"], "window": f["window"],
             "saving_kwh_per_year": kwh, "saving_money_per_year": money,
             "saving_co2e_t_per_year": [round(k * emission_factor / 1000, 1) for k in kwh],
-            "payback_months": payback, "implementation_cost": list(cost), "ease": lib["ease"],
+            "ease": lib["ease"],
             "rationale": rationale, "evidence_refs": f["evidence_refs"] + (new_waste[f["asset"]]["evidence_refs"] if f["asset"] in new_waste else []),
             "confidence": "high" if f["asset"] in new_waste else f["confidence"], "requires_approval": True,
             "is_new_waste": f["asset"] in new_waste,
             "assumptions": [f"price {price:.2f} per kWh in that window (current tariff)",
                             f"emission factor {emission_factor} kg CO2e per kWh",
-                            f"implementation cost {cost[0]:,} to {cost[1]:,} (assumed, not in data)",
                             f"expected off-hours load {round(100 * f['benchmark_share'][0])}-{round(100 * f['benchmark_share'][1])}% of shift load (rule of thumb)"]})
-    actions.sort(key=lambda a: (a["payback_months"][1] if a["payback_months"][1] is not None else 1e9, EASE_RANK.get(a["ease"], 9)))
+    actions.sort(key=lambda a: (EASE_RANK.get(a["ease"], 9), -a["saving_money_per_year"][1]))
     for i, a in enumerate(actions, 1):
         a["rank"] = i
     return actions
@@ -404,13 +415,11 @@ def estimate_savings(findings: list[dict], leaks: list[dict], meters: pd.DataFra
 
 def savings_summary(actions: list[dict]) -> dict:
     if not actions:
-        return {"actions": 0, "saving_money_per_year": [0, 0], "saving_kwh_per_year": [0, 0], "saving_co2e_t_per_year": [0, 0],
-                "implementation_cost": [0, 0]}
+        return {"actions": 0, "saving_money_per_year": [0, 0], "saving_kwh_per_year": [0, 0], "saving_co2e_t_per_year": [0, 0]}
     tot = lambda k: [round(sum(a[k][0] for a in actions), 1), round(sum(a[k][1] for a in actions), 1)]
     return {"actions": len(actions), "saving_money_per_year": tot("saving_money_per_year"),
             "saving_kwh_per_year": tot("saving_kwh_per_year"), "saving_co2e_t_per_year": tot("saving_co2e_t_per_year"),
-            "implementation_cost": tot("implementation_cost"),
-            "fastest_payback_months": actions[0]["payback_months"]}
+            "top_action": actions[0]["action"]}
 
 
 def asset_check(meters: pd.DataFrame, frames: dict, asset: str, period: str, compare_to: str,

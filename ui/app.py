@@ -126,6 +126,7 @@ with top_r:
                  help="; ".join(f"{c['check']}: {c['detail']}" for c in chk["flags"]) or None)
     badges.badge(f"LLM: {llm.get('model', 'templates').split('.')[-1].replace('-v1:0', '') if llm['provider'] != 'mock' else 'templates only'}",
                  icon=":material/smart_toy:", color="blue" if llm["status"] == "ok" else "gray")
+    data_menu = badges.popover("Data", icon=":material/database:")
 
 if data.get("changes"):
     c = data["changes"]
@@ -133,8 +134,7 @@ if data.get("changes"):
     st.info(f"**New data applied** ({c['change']}). The bill rise moved from **{c['total_before']:.2f}%** to **{c['total_after']:.2f}%** "
             f"({moved}). Savings found: {ch.money_range(c['savings_after'], cur)} a year.", icon=":material/update:")
 
-tab_overview, tab_ask, tab_plan, tab_energy, tab_data = st.tabs(
-    ["Overview", "Ask a question", "Savings plan", "Where the energy goes", "Data and checks"])
+tab_overview, tab_ask, tab_plan, tab_energy = st.tabs(["Overview", "Ask a question", "Savings plan", "Where the energy goes"])
 
 
 # ---- overview --------------------------------------------------------------------------------
@@ -158,12 +158,9 @@ with tab_overview:
                     delta_color="off", delta_arrow="off", border=True, help=f"Range {wp['range'][0]:.2f} to {wp['range'][1]:.2f} points")
         k[3].metric("Savings found", ch.money_range(sav["saving_money_per_year"], cur), "a year", delta_color="off", delta_arrow="off", border=True,
                     help=f"{sav['actions']} actions, {sav['saving_co2e_t_per_year'][0]}–{sav['saving_co2e_t_per_year'][1]} t CO2e a year")
-        if sav["actions"]:
-            pb = sav["fastest_payback_months"]
-            k[4].metric("Fastest payback", f"{pb[1]:g} months" if pb[1] >= 1 else "under 1 month",
-                        data["actions"][0]["action"].split(" (")[0], delta_color="off", delta_arrow="off", border=True)
-        else:
-            k[4].metric("Fastest payback", "–", "no waste found", delta_color="off", delta_arrow="off", border=True)
+        k[4].metric("CO2e avoidable", f"{sav['saving_co2e_t_per_year'][0]:,.0f}–{sav['saving_co2e_t_per_year'][1]:,.0f} t",
+                    "a year", delta_color="off", delta_arrow="off", border=True,
+                    help=f"Emission factor {data['emission_factor']} kg CO2e per kWh ({data['emission_factor_source']})")
 
         left, right = st.columns([3, 2], gap="large")
         with left:
@@ -184,7 +181,7 @@ with tab_overview:
                         st.markdown(f'<div class="action-title">{a["rank"]}. {a["action"]}</div>', unsafe_allow_html=True)
                         row = st.container(horizontal=True, gap="small")
                         row.badge(f"{ch.money_range(a['saving_money_per_year'], cur)} a year", color="green")
-                        row.badge(f"payback {a['payback_months'][0]}–{a['payback_months'][1]} months", color="blue")
+                        row.badge(f"{a['saving_kwh_per_year'][0] / 1000:,.0f}–{a['saving_kwh_per_year'][1] / 1000:,.0f} MWh", color="blue")
                         row.badge(a["ease"], color="gray")
             else:
                 st.success("No controllable waste pattern was found. The rise is explained by causes outside the factory's control.")
@@ -263,9 +260,9 @@ with tab_plan:
         k[1].metric("Energy saved a year", f"{sav['saving_kwh_per_year'][0] / 1000:,.0f}–{sav['saving_kwh_per_year'][1] / 1000:,.0f} MWh", border=True)
         k[2].metric("CO2e avoided a year", f"{sav['saving_co2e_t_per_year'][0]:,.0f}–{sav['saving_co2e_t_per_year'][1]:,.0f} t", border=True,
                     help=f"Emission factor {data['emission_factor']} kg CO2e per kWh ({data['emission_factor_source']})")
-        k[3].metric("Cost to do all of it", ch.money_range(sav["implementation_cost"], cur), border=True,
-                    help="Assumed cost ranges; the data has no cost table")
-        st.subheader("Ranked by payback")
+        k[3].metric("Actions found", f"{sav['actions']}", border=True,
+                    help="No payback is shown: the data has no implementation costs")
+        st.subheader("Ranked by ease, then saving")
         st.plotly_chart(ch.savings(acts, cur), config={"displayModeBar": False}, width="stretch")
         for a in acts:
             with st.container(border=True):
@@ -274,11 +271,11 @@ with tab_plan:
                     st.markdown(f'<div class="action-title">{a["rank"]}. {a["action"]}</div>', unsafe_allow_html=True)
                     row = st.container(horizontal=True, gap="small")
                     row.badge(f"{ch.money_range(a['saving_money_per_year'], cur)} a year", color="green")
-                    row.badge(f"payback {a['payback_months'][0]}–{a['payback_months'][1]} months", color="blue")
+                    row.badge(f"{a['saving_kwh_per_year'][0] / 1000:,.0f}–{a['saving_kwh_per_year'][1] / 1000:,.0f} MWh", color="blue")
                     row.badge(f"{a['saving_co2e_t_per_year'][0]}–{a['saving_co2e_t_per_year'][1]} t CO2e", color="gray")
                     row.badge(f"ease: {a['ease']}", color="gray")
                     row.badge(f"confidence: {a['confidence']}", color="gray")
-                    st.markdown(f"<span class='muted'>{a['rationale']} Cost {ch.money_range(a['implementation_cost'], cur)} (assumed). "
+                    st.markdown(f"<span class='muted'>{a['rationale']} "
                                 f"Evidence: {', '.join(a['evidence_refs'])}</span>", unsafe_allow_html=True)
                 with side:
                     decision = a["approval"].get("decision", "pending")
@@ -349,52 +346,42 @@ with tab_energy:
                      column_config={"Share of its energy": st.column_config.ProgressColumn(format="percent", min_value=0, max_value=1)})
 
 
-# ---- data and checks ------------------------------------------------------------------------------
+# ---- data menu (validation, upload, late drop) ------------------------------------------------
 
-with tab_data:
+def data_panel() -> None:
     val, e = call("GET", "/validation")
-    left, right = st.columns([3, 2], gap="large")
-    with left:
-        st.subheader("Validation, run before any analysis")
-        if val:
-            for c in val["checks"]:
-                icon = "✅" if c["passed"] else "⚠️"
-                st.markdown(f"{icon} **{c['check']}**  \n<span class='muted'>{c['detail']}</span>", unsafe_allow_html=True)
-            cl = val["cleaning"]
-            st.subheader("What cleaning changed")
-            k = st.columns(4)
-            k[0].metric("Duplicates removed", f"{cl['duplicates_removed']:,}", border=True)
-            k[1].metric("Gaps filled", f"{cl['filled_by_interpolation'] + cl['filled_by_typical_profile']:,}", border=True,
-                        help=f"{cl['filled_by_interpolation']} by interpolation, {cl['filled_by_typical_profile']} from the typical day")
-            k[2].metric("Meter resets", f"{cl['negative_readings']}", border=True)
-            k[3].metric("Unmetered share", f"{100 * cl.get('unmetered_share', 0):.1f}%", border=True)
-    with right:
-        st.subheader("Load data")
-        with st.container(border=True):
-            table = st.selectbox("Table", TABLES)
-            f = st.file_uploader("CSV in the Annex B schema", type="csv")
-            mode = st.segmented_control("How", ["auto", "replace"], default="auto",
-                                        format_func=lambda m: "Merge or replace (automatic)" if m == "auto" else "Replace the whole table")
-            if st.button("Load file", type="primary", disabled=f is None, icon=":material/upload:"):
-                out, e = call("POST", "/ingest", files={"file": (f.name, f.getvalue(), "text/csv")}, data={"table": table, "mode": mode or "auto"})
-                if e or out.get("status") != "loaded":
-                    st.error(e or out.get("detail"))
-                else:
-                    st.toast(f"Loaded {out['rows_loaded']:,} rows: {out.get('how', '')}")
-                    refresh()
-        c1, c2 = st.columns(2)
-        if data.get("late_drop_available") and c1.button("Apply the late data drop", icon=":material/update:", width="stretch",
-                                                         help="Corrected tariff and a recalibrated sub-meter"):
-            out, e = call("POST", "/admin/late-drop")
-            st.error(e) if e else refresh()
-        if c2.button("Reload the sample", icon=":material/restart_alt:", width="stretch"):
-            out, e = call("POST", "/admin/load", json={"sample_seed": 1})
-            st.session_state.history = []
-            st.error(e) if e else refresh()
-        if val and val.get("ingest_log"):
-            st.markdown("**Recent loads**")
-            st.dataframe(pd.DataFrame([{"Version": r["version"], "What happened": r["how"], "Rows": r["rows_loaded"]}
-                                       for r in val["ingest_log"]]), hide_index=True, width="stretch")
+    if val:
+        st.markdown("**Validation, run before any analysis**")
+        for c in val["checks"]:
+            st.markdown(f"{'✅' if c['passed'] else '⚠️'} {c['check']}  \n<span class='muted'>{c['detail']}</span>", unsafe_allow_html=True)
+        cl = val["cleaning"]
+        st.caption(f"Cleaning: {cl['duplicates_removed']:,} duplicates removed, "
+                   f"{cl['filled_by_interpolation'] + cl['filled_by_typical_profile']:,} gaps filled, "
+                   f"{cl['negative_readings']} meter reset, {100 * cl.get('unmetered_share', 0):.1f}% unmetered.")
+    st.divider()
+    st.markdown("**Load data**")
+    table = st.selectbox("Table", TABLES, key="dp_table")
+    f = st.file_uploader("CSV in the Annex B schema", type="csv", key="dp_file")
+    if st.button("Load file", type="primary", disabled=f is None, icon=":material/upload:", key="dp_load"):
+        out, e = call("POST", "/ingest", files={"file": (f.name, f.getvalue(), "text/csv")}, data={"table": table})
+        if e or out.get("status") != "loaded":
+            st.error(e or out.get("detail"))
+        else:
+            st.toast(f"Loaded {out['rows_loaded']:,} rows: {out.get('how', '')}")
+            refresh()
+    c1, c2 = st.columns(2)
+    if data.get("late_drop_available") and c1.button("Apply the late data drop", icon=":material/update:", width="stretch",
+                                                     help="Corrected tariff and a recalibrated sub-meter", key="dp_late"):
+        out, e = call("POST", "/admin/late-drop")
+        st.error(e) if e else refresh()
+    if c2.button("Reload the sample", icon=":material/restart_alt:", width="stretch", key="dp_reload"):
+        out, e = call("POST", "/admin/load", json={"sample_seed": 1})
+        st.session_state.history = []
+        st.error(e) if e else refresh()
+
+
+with data_menu:
+    data_panel()
 
 
 # ---- the finance brief: written last so the rest of the page never waits for the LLM ----------------

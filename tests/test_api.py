@@ -103,6 +103,12 @@ def test_furnace_is_not_blamed(ctx):
     assert a["summary"].startswith("No.") and a["data"]["check_asset"]["off_hours_waste"] == []
 
 
+def test_payback_is_not_invented(ctx):
+    client, *_ = ctx
+    a = ask(client, "Which action pays back fastest?")
+    assert a["summary"].startswith("Payback cannot be computed") and "payback_months" not in a["recommendations"][0]
+
+
 def test_wrong_premise_is_corrected(ctx):
     client, *_ = ctx
     a = ask(client, "Why did the bill go up 30%?")
