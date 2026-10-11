@@ -202,3 +202,41 @@ The code, tests, README and plan in this repository were written with Claude Cod
 | [Name 2] | API and agent |
 | [Name 3] | Data, validation, evaluation data |
 | [Name 4] | Interface and delivery |
+
+
+The data isn’t in the GitHub repository, so on a new device you regenerate it. The generator is seeded, so the same commands produce the same datasets as long as the pinned package versions are installed.
+
+Steps (Windows)
+
+The device needs Git and Python 3.11. The person also needs access to the private repository, so add them as a collaborator first.
+
+1. Get the code
+
+git clone https://github.com/nakulgrover118/factory-energy-agent.git
+cd factory-energy-agent
+
+2. Create the environment and install packages
+
+py -3.11 -m venv .venv
+.venv\Scripts\python -m pip install -r requirements.txt
+
+3. Generate the five datasets into a new data folder
+
+set PYTHONPATH=src
+.venv\Scripts\python -m energy.generate --out data --seeds 1 2 3 --control --stress
+
+4. Load one dataset into the app’s store. This prints the validation output.
+
+.venv\Scripts\python -m energy.loader data\seed_1
+
+5. Start the API and the UI in two terminals, with PYTHONPATH=src set in the first
+
+.venv\Scripts\python -m uvicorn energy.api:app --app-dir src --port 8000
+.venv\Scripts\python -m streamlit run ui/app.py
+
+On macOS or Linux, use python3.11 -m venv .venv, .venv/bin/python in place of .venv\Scripts\python, and export PYTHONPATH=src.
+
+Other ways to get data onto the device
+Docker: docker compose up --build generates and loads one dataset automatically on first start. I haven’t built or run the Docker setup, so treat this as untested.
+Copy the folder: copy data\ from your PC by USB or a shared drive. It’s roughly 40 MB.
+Through the UI: once the app is running, use “Load a CSV file” in the sidebar to upload the four CSVs one table at a time. This is also how you’d load the HCLTech data pack.
