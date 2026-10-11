@@ -5,39 +5,39 @@ The LLM layer is not part of this report; it covers the numbers the LLM will be 
 
 ## Per dataset
 
-| Dataset | Model | Stage | True % | Est % | Tariff | Volume | Mix | Weather | Waste | MAE | Truth in range | Leak recall | False leaks | Saving in range | R2 | Seconds |
+| Dataset | Model | Stage | True % | Est % | Tariff | Volume | Mix | Weather | Waste | MAE | Truth in range | Waste found | False waste claims | Savings in range | R2 | Seconds |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| control | ols | as_loaded | 13.03 | 13.04 | +0.01 | -0.02 | +0.03 | +0.02 | -0.02 | 0.02 | 5/5 | - | 0 | - | 0.998 | 0.96 |
-| control | ols | after_late_drop | 12.52 | 12.53 | +0.00 | -0.02 | +0.03 | +0.02 | -0.02 | 0.02 | 5/5 | - | 0 | - | 0.998 | 0.92 |
-| control | ridge | as_loaded | 13.03 | 13.04 | +0.01 | -0.23 | -0.02 | -0.05 | +0.31 | 0.12 | 3/5 | - | 0 | - | 0.998 | 1.14 |
-| control | ridge | after_late_drop | 12.52 | 12.53 | +0.00 | -0.23 | -0.02 | -0.05 | +0.31 | 0.12 | 3/5 | - | 0 | - | 0.998 | 1.34 |
-| seed_1 | ols | as_loaded | 14.67 | 14.66 | +0.01 | +0.13 | +0.11 | -0.04 | -0.23 | 0.10 | 5/5 | 1.0 | 0 | True | 0.998 | 1.13 |
-| seed_1 | ols | after_late_drop | 14.13 | 14.13 | +0.02 | +0.13 | +0.11 | -0.04 | -0.23 | 0.11 | 5/5 | 1.0 | 0 | True | 0.998 | 1.36 |
-| seed_1 | ridge | as_loaded | 14.67 | 14.66 | +0.00 | -0.29 | +0.05 | -0.07 | +0.29 | 0.14 | 2/5 | 1.0 | 0 | True | 0.998 | 1.18 |
-| seed_1 | ridge | after_late_drop | 14.13 | 14.13 | +0.01 | -0.29 | +0.05 | -0.07 | +0.29 | 0.14 | 2/5 | 1.0 | 0 | True | 0.998 | 0.99 |
-| seed_2 | ols | as_loaded | 15.60 | 15.58 | -0.01 | +0.10 | +0.04 | -0.01 | -0.12 | 0.06 | 5/5 | 1.0 | 0 | True | 0.999 | 1.1 |
-| seed_2 | ols | after_late_drop | 15.05 | 15.04 | -0.01 | +0.10 | +0.04 | -0.01 | -0.12 | 0.06 | 5/5 | 1.0 | 0 | True | 0.999 | 1.07 |
-| seed_2 | ridge | as_loaded | 15.60 | 15.58 | -0.01 | -0.19 | -0.04 | -0.01 | +0.24 | 0.10 | 4/5 | 1.0 | 0 | True | 0.998 | 1.17 |
-| seed_2 | ridge | after_late_drop | 15.05 | 15.04 | -0.01 | -0.19 | -0.04 | -0.01 | +0.24 | 0.10 | 4/5 | 1.0 | 0 | True | 0.998 | 1.16 |
-| seed_3 | ols | as_loaded | 16.03 | 16.02 | +0.01 | -0.03 | +0.04 | -0.06 | +0.03 | 0.03 | 5/5 | 1.0 | 0 | True | 0.999 | 1.12 |
-| seed_3 | ols | after_late_drop | 15.49 | 15.48 | +0.01 | -0.03 | +0.04 | -0.06 | +0.03 | 0.03 | 5/5 | 1.0 | 0 | True | 0.999 | 1.47 |
-| seed_3 | ridge | as_loaded | 16.03 | 16.02 | -0.00 | -0.46 | -0.01 | -0.06 | +0.52 | 0.21 | 3/5 | 1.0 | 0 | True | 0.999 | 1.23 |
-| seed_3 | ridge | after_late_drop | 15.49 | 15.48 | -0.00 | -0.46 | -0.01 | -0.06 | +0.52 | 0.21 | 3/5 | 1.0 | 0 | True | 0.999 | 1.24 |
-| stress | ols | as_loaded | 15.94 | 15.95 | -0.00 | +0.34 | +0.19 | -0.31 | -0.21 | 0.21 | 3/5 | 1.0 | 0 | True | 0.998 | 1.35 |
-| stress | ols | after_late_drop | 15.42 | 15.42 | -0.01 | +0.34 | +0.19 | -0.31 | -0.21 | 0.21 | 3/5 | 1.0 | 0 | True | 0.998 | 1.18 |
-| stress | ridge | as_loaded | 15.94 | 15.95 | +0.01 | -0.06 | +0.10 | -0.33 | +0.29 | 0.16 | 3/5 | 1.0 | 0 | True | 0.998 | 1.16 |
-| stress | ridge | after_late_drop | 15.42 | 15.42 | -0.00 | -0.06 | +0.10 | -0.33 | +0.29 | 0.16 | 3/5 | 1.0 | 0 | True | 0.998 | 1.22 |
+| control | ols | as_loaded | 13.57 | 13.58 | +0.00 | +0.01 | +0.01 | +0.01 | -0.02 | 0.01 | 5/5 | - | 0 | - | 1.000 | 0.35 |
+| control | ols | after_late_drop | 13.28 | 13.29 | +0.00 | +0.01 | +0.01 | +0.01 | -0.02 | 0.01 | 5/5 | - | 0 | - | 1.000 | 0.39 |
+| control | ridge | as_loaded | 13.57 | 13.58 | -0.01 | -0.24 | -0.05 | -0.10 | +0.41 | 0.16 | 2/5 | - | 0 | - | 0.999 | 0.34 |
+| control | ridge | after_late_drop | 13.28 | 13.29 | -0.01 | -0.24 | -0.05 | -0.10 | +0.41 | 0.16 | 2/5 | - | 0 | - | 0.999 | 0.38 |
+| seed_1 | ols | as_loaded | 15.45 | 15.44 | +0.01 | +0.05 | +0.00 | -0.02 | -0.05 | 0.03 | 5/5 | 3/3 | 0 | 3/3 | 0.998 | 0.34 |
+| seed_1 | ols | after_late_drop | 15.04 | 15.03 | +0.02 | +0.05 | +0.00 | -0.02 | -0.05 | 0.03 | 5/5 | 3/3 | 0 | 3/3 | 0.998 | 0.39 |
+| seed_1 | ridge | as_loaded | 15.45 | 15.44 | -0.01 | -0.43 | -0.06 | -0.05 | +0.54 | 0.22 | 2/5 | 3/3 | 0 | 3/3 | 0.998 | 0.33 |
+| seed_1 | ridge | after_late_drop | 15.04 | 15.03 | -0.00 | -0.43 | -0.06 | -0.05 | +0.54 | 0.22 | 2/5 | 3/3 | 0 | 3/3 | 0.998 | 0.39 |
+| seed_2 | ols | as_loaded | 16.43 | 16.42 | +0.00 | +0.10 | +0.02 | +0.00 | -0.14 | 0.05 | 3/5 | 3/3 | 0 | 3/3 | 0.996 | 0.33 |
+| seed_2 | ols | after_late_drop | 16.01 | 16.00 | -0.00 | +0.10 | +0.02 | +0.00 | -0.14 | 0.05 | 3/5 | 3/3 | 0 | 3/3 | 0.996 | 0.39 |
+| seed_2 | ridge | as_loaded | 16.43 | 16.42 | +0.00 | -0.22 | -0.07 | -0.01 | +0.28 | 0.12 | 3/5 | 3/3 | 0 | 3/3 | 0.996 | 0.33 |
+| seed_2 | ridge | after_late_drop | 16.01 | 16.00 | -0.00 | -0.22 | -0.07 | -0.01 | +0.28 | 0.12 | 3/5 | 3/3 | 0 | 3/3 | 0.996 | 0.39 |
+| seed_3 | ols | as_loaded | 16.77 | 16.75 | -0.00 | -0.07 | +0.02 | -0.02 | +0.05 | 0.03 | 5/5 | 3/3 | 0 | 3/3 | 0.997 | 0.33 |
+| seed_3 | ols | after_late_drop | 16.36 | 16.34 | -0.00 | -0.07 | +0.02 | -0.02 | +0.05 | 0.03 | 5/5 | 3/3 | 0 | 3/3 | 0.997 | 0.4 |
+| seed_3 | ridge | as_loaded | 16.77 | 16.75 | +0.01 | -0.52 | -0.05 | -0.04 | +0.58 | 0.24 | 3/5 | 3/3 | 0 | 3/3 | 0.997 | 0.33 |
+| seed_3 | ridge | after_late_drop | 16.36 | 16.34 | +0.01 | -0.52 | -0.05 | -0.04 | +0.58 | 0.24 | 3/5 | 3/3 | 0 | 3/3 | 0.997 | 0.38 |
+| stress | ols | as_loaded | 17.00 | 17.01 | -0.00 | +0.10 | +0.12 | -0.27 | +0.06 | 0.11 | 3/5 | 3/3 | 0 | 3/3 | 0.995 | 0.33 |
+| stress | ols | after_late_drop | 16.60 | 16.61 | -0.00 | +0.10 | +0.12 | -0.27 | +0.06 | 0.11 | 3/5 | 3/3 | 0 | 3/3 | 0.995 | 0.39 |
+| stress | ridge | as_loaded | 17.00 | 17.01 | -0.00 | -0.32 | +0.02 | -0.30 | +0.61 | 0.25 | 2/5 | 3/3 | 0 | 3/3 | 0.994 | 0.34 |
+| stress | ridge | after_late_drop | 16.60 | 16.61 | -0.00 | -0.32 | +0.02 | -0.30 | +0.61 | 0.25 | 2/5 | 3/3 | 0 | 3/3 | 0.994 | 0.39 |
 
 ## Configuration comparison
 
 | Model | Mean MAE (pp) | Worst single error (pp) | Truth inside range | Mean MAE on held-out sets |
 | --- | --- | --- | --- | --- |
-| ols | 0.085 | 0.34 | 46/50 | 0.08 |
-| ridge | 0.146 | 0.52 | 30/50 | 0.147 |
+| ols | 0.046 | 0.27 | 42/50 | 0.05 |
+| ridge | 0.198 | 0.61 | 24/50 | 0.193 |
 
 ## Validation output (first dataset, as loaded)
 
-- [PASS] 1. Sub-meters sum to main within tolerance: sub-meters are 97.5% of main; unmetered remainder 2.5%
+- [PASS] 1. Sub-meters sum to main within tolerance: sub-meters are 96.7% of main; unmetered remainder 3.3%
 - [PASS] 2. No negative energy; resets handled: 1 negative readings treated as meter resets and re-estimated
 - [PASS] 3. Timestamps regular and in one time zone: 0 off-grid timestamps; 258 missing meter intervals and 200 duplicate rows reported
 - [PASS] 4. Tariff periods do not overlap and cover the period: 4 tariff rows cover 2026-04-01 to 2026-09-30
@@ -65,6 +65,17 @@ The LLM layer is not part of this report; it covers the numbers the LLM will be 
   "filled_by_interpolation": 31,
   "filled_by_typical_profile": 228,
   "share_of_intervals_estimated": 0.00164,
-  "unmetered_share": 0.0254
+  "estimated_share_by_meter": {
+    "compressors": 0.0015,
+    "furnace": 0.0018,
+    "hvac": 0.0022,
+    "lighting": 0.0016,
+    "line_1": 0.0015,
+    "line_2": 0.0015,
+    "line_3": 0.0015,
+    "main": 0.0016,
+    "utilities": 0.0015
+  },
+  "unmetered_share": 0.0333
 }
 ```

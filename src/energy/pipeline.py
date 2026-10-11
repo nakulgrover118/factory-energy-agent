@@ -22,6 +22,7 @@ STEP = pd.Timedelta("15min")
 SUB_METER_TOLERANCE = 0.10  # sub-meters may be up to 10% below (or 2% above) the main meter
 SHORT_GAP = 8  # intervals (2 hours) filled by interpolation; longer gaps use a typical-day profile
 DEFAULT_PEAK_HOURS = (6, 22)
+MAX_ESTIMATED_SHARE = 0.05  # a meter with more missing intervals than this is flagged
 
 
 def _naive_utc(s: pd.Series) -> pd.Series:
@@ -82,7 +83,7 @@ def load_dir(path: str | Path, late_drop: bool = False) -> dict:
             f = path / "late_drop" / f"{name}.csv"
             if f.exists():
                 new, rej = parse_table(name, pd.read_csv(f))
-                frames[name] = apply_ingest(name, frames[name], new)
+                frames[name] = apply_ingest(name, frames[name], new)[0]
                 rejected[name] += rej
     card = path / "data_card.json"
     frames["_card"] = json.loads(card.read_text()) if card.exists() else None
@@ -90,16 +91,35 @@ def load_dir(path: str | Path, late_drop: bool = False) -> dict:
     return frames
 
 
-def apply_ingest(name: str, old: pd.DataFrame, new: pd.DataFrame) -> pd.DataFrame:
-    """Merge a newly ingested table. Safe to repeat: the same file twice changes nothing."""
-    if name == "tariff":
-        return new  # a tariff file is a complete schedule
-    if name == "meter_15min":  # new rows replace old rows for the same meter and time
-        keep = old[~old["meter_id"].isin(new["meter_id"].unique())]
-        return pd.concat([keep, new], ignore_index=True)
+def apply_ingest(name: str, old: pd.DataFrame | None, new: pd.DataFrame, mode: str = "auto") -> tuple[pd.DataFrame, str]:
+    """Merge a newly ingested table into the loaded one. Safe to repeat: the same file twice
+    changes nothing. Returns the merged table and a short description of what happened.
+
+    mode="replace" swaps the whole table. mode="auto" decides from the file itself:
+      tariff                 always a complete schedule, so it replaces the table
+      a whole dataset        (main plus 3+ sub-meters, or most of the date range) replaces the table
+      one meter's full series replaces that meter only (a recalibrated sub-meter)
+      anything shorter       updates matching rows and adds new ones"""
+    if old is None or old.empty or mode == "replace" or name == "tariff":
+        return new.reset_index(drop=True), "replaced the table"
+    if name == "meter_15min":
+        span = lambda d: (d["ts"].max() - d["ts"].min()) or pd.Timedelta(minutes=15)
+        meters = set(new["meter_id"].unique())
+        if "main" in meters and len(meters) >= 4 and span(new) >= 0.5 * span(old):
+            return new.reset_index(drop=True), "replaced the table (a complete meter file)"
+        full = [m for m in meters if m in set(old["meter_id"])
+                and span(new[new["meter_id"] == m]) >= 0.8 * span(old[old["meter_id"] == m])]
+        keep = old[~old["meter_id"].isin(full)]
+        merged = pd.concat([keep, new], ignore_index=True).drop_duplicates(subset=["meter_id", "ts"], keep="last")
+        how = (f"replaced the full series of {', '.join(sorted(full))}" if full else "") + \
+              (("; " if full else "") + f"updated or added rows for {', '.join(sorted(meters - set(full)))}" if meters - set(full) else "")
+        return merged.sort_values(["meter_id", "ts"]).reset_index(drop=True), how
     key = ["date", "product"] if name == "production" else ["date"]
-    merged = pd.concat([old, new], ignore_index=True)
-    return merged.drop_duplicates(subset=key, keep="last").reset_index(drop=True)
+    old_span = (old["date"].max() - old["date"].min()).days or 1
+    if (new["date"].max() - new["date"].min()).days >= 0.8 * old_span:
+        return new.reset_index(drop=True), "replaced the table (it covers the whole period)"
+    merged = pd.concat([old, new], ignore_index=True).drop_duplicates(subset=key, keep="last")
+    return merged.sort_values(key).reset_index(drop=True), f"updated or added {len(new)} rows"
 
 
 def _wide(meter: pd.DataFrame) -> pd.DataFrame:
@@ -134,8 +154,11 @@ def validate(frames: dict) -> list[dict]:
     full = pd.date_range(wide.index.min(), wide.index.max(), freq=STEP)
     missing = int(wide.reindex(full).isna().sum().sum())
     dupes = int(meter.duplicated(subset=["meter_id", "ts"]).sum())
-    add(3, "Timestamps regular and in one time zone", off_grid == 0,
-        f"{off_grid} off-grid timestamps; {missing} missing meter intervals and {dupes} duplicate rows reported")
+    gaps = wide.reindex(full).isna().mean()
+    sparse = {m: round(100 * float(v), 1) for m, v in gaps.items() if v > MAX_ESTIMATED_SHARE}
+    add(3, "Timestamps regular and in one time zone", off_grid == 0 and not sparse,
+        f"{off_grid} off-grid timestamps; {missing} missing meter intervals and {dupes} duplicate rows reported"
+        + (f"; mostly missing, so not analysed: {', '.join(f'{m} ({v}% missing)' for m, v in sparse.items())}" if sparse else ""))
 
     problems = []
     lo, hi = wide.index.min(), wide.index.max()
@@ -162,7 +185,11 @@ def validate(frames: dict) -> list[dict]:
         + (f"{len(no_prod)} meter day(s) have no production row." if len(no_prod) else "") or "calendar consistent")
 
     card = frames.get("_card")
-    if card:
+    if card and frames.get("_card_stale"):
+        add(6, "Row counts match the data card", True,
+            "data was updated after loading, so the data card's counts describe the original files: "
+            + ", ".join(f"{k} {len(frames[k]):,} rows now" for k in SCHEMA))
+    elif card:
         want = card["contains"]["row_counts"]
         raw_counts = frames.get("_raw_counts") or {k: len(frames[k]) + frames["_rejected"].get(k, 0) for k in SCHEMA}
         diff = {k: (raw_counts[k], want[k]) for k in want if raw_counts.get(k) != want[k]}
@@ -199,6 +226,7 @@ def clean(frames: dict) -> tuple[pd.DataFrame, dict]:
     report["filled_by_interpolation"] = int((gaps & ~long_gap).sum().sum())
     report["filled_by_typical_profile"] = int(long_gap.sum().sum())
     report["share_of_intervals_estimated"] = round(float(gaps.sum().sum() / gaps.size), 5)
+    report["estimated_share_by_meter"] = {c: round(float(v), 4) for c, v in gaps.mean().items()}
 
     if "main" in filled.columns and filled.shape[1] > 1:
         subs = filled.drop(columns="main").sum(axis=1)

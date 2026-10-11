@@ -3,7 +3,9 @@
 .env
 data
 store
-eval
+eval/*.md
+eval/*.json
+!eval/cases.json
 usecase-deck
 __pycache__
 .pytest_cache

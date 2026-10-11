@@ -1,0 +1,64 @@
+{
+    "run_id": "en-654df8f4",
+    "question": "What will the tariff be next year?",
+    "period": "2026-Q3",
+    "compare_to": "2026-Q2",
+    "answer_type": "not_in_data",
+    "steps": [
+        {
+            "agent": "orchestrator",
+            "tool": "route",
+            "input": {
+                "router": "llm",
+                "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+                "ms": 1874,
+                "tokens": 1763
+            },
+            "output": {
+                "intent": "out_of_scope",
+                "params": {},
+                "plan": [],
+                "period": "2026-Q3",
+                "compare_to": "2026-Q2"
+            }
+        },
+        {
+            "agent": "writer",
+            "tool": "compose",
+            "output": {
+                "answer_type": "not_in_data"
+            }
+        },
+        {
+            "agent": "checker",
+            "tool": "number_check",
+            "output": {
+                "unmatched_first_pass": [],
+                "unmatched_final": [],
+                "all_numbers_match_tools": true
+            }
+        }
+    ],
+    "llm_calls": 1,
+    "tokens": 1763,
+    "llm_errors": [],
+    "llm_provider": "bedrock",
+    "llm_model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "data_version": 6,
+    "latency_ms": 1886,
+    "approval_status": "not_applicable",
+    "response": {
+        "run_id": "en-654df8f4",
+        "answer_type": "not_in_data",
+        "summary": "The loaded data cannot answer that. It holds past meter readings, tariffs, production and weather for the loaded quarters (no forecasts), so no figure is given.",
+        "bridge": [],
+        "recommendations": [],
+        "data": {
+            "period": "2026-Q3",
+            "compare_to": "2026-Q2",
+            "currency": "INR"
+        },
+        "assumptions": [],
+        "limitations": []
+    }
+}

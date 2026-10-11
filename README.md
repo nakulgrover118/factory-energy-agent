@@ -1,204 +1,205 @@
 # Factory Energy Cost Decomposition and Savings Agent
 
-Explains why a factory's electricity bill changed between two quarters. It splits the change into tariff, volume, product mix, weather and waste so the parts add up to the total, finds controllable waste with evidence, and suggests actions with savings ranges and payback.
+The factory's electricity bill rose 15%. This system says **why**, **what the factory can control**, and **what to fix first**:
 
-Every number is computed by code. The LLM only labels requests the keyword router cannot place and rewords two kinds of brief; a number check blocks any figure that no tool produced.
+- It splits the rise into tariff, volume, product mix, weather and new waste. The parts add up to the total, and each comes with a range.
+- It finds controllable waste from the meter data, with evidence: a compressed-air leak, hall lights left on overnight, HVAC running on Sundays.
+- It turns each waste pattern into an action with yearly ₹, kWh and CO2e savings, an implementation cost and a payback, each as a range. Actions are ranked, and a manager approves them.
+- It answers questions in plain words, quoting only numbers the tools computed. When the data cannot answer, it says so.
+
+On the bundled sample, it explains the 15.03% rise as 12.98 points outside the factory's control and 2.05 points of new waste (a compressor leak that started on 20 July). It finds ₹19–23 lakh a year of savings for ₹1.7–3.5 lakh of work; the first action pays back in under a month.
 
 HCLTech Future Ready AI Engineer Hackathon, Factory Energy track.
 
-## Status
+## Quick start
 
-| Part | State |
+```bash
+uv venv -p 3.11 .venv && uv pip install -p .venv/bin/python -r requirements.txt   # or: python3.11 -m venv .venv && .venv/bin/pip install -r requirements.txt
+cp .env.example .env              # set AWS_PROFILE to a profile with Bedrock access, or MOCK_LLM=true
+export PYTHONPATH=src
+.venv/bin/python -m energy.generate --out data --seeds 1 2 3 --control --stress
+.venv/bin/python -m uvicorn energy.api:app --app-dir src --port 8000 &
+.venv/bin/python -m energy.loader data/seed_1          # prints the six validation checks
+.venv/bin/python -m streamlit run ui/app.py            # http://localhost:8501
+```
+
+With Docker (Bedrock credentials are mounted read-only from `~/.aws`; the image never contains them):
+
+```bash
+docker compose up --build         # API on :8000, UI on :8501; loads the synthetic sample on first start
+docker compose exec api python -m energy.loader /app/data/<folder>      # load a folder of CSVs (judges' data)
+```
+
+## Using the dashboard
+
+The dashboard opens on the answer; nothing needs typing.
+
+| Tab | What it shows |
 | --- | --- |
-| Data generator, validation, cleaning, analytics, evaluation | Built, 32 tests passing |
-| FastAPI contract and LangGraph agent | Built, tested in mock-LLM mode |
-| Streamlit UI | Built, checked against the live API |
-| Docker | Files written and `docker compose config` validates; **no image has been built or run yet** |
-| Anthropic provider | Written; **never called with a real key** |
-| OpenAI, Gemini, Ollama providers | Not implemented; they fall back to mock |
-| HCLTech data pack | Not available to us; all results are on our own generated data |
+| **Overview** | Headline figures (bill, points outside our control, new waste, savings found, fastest payback). The bill-bridge chart: blue causes are outside the factory's control, the orange one is controllable. Also a short brief written by the LLM from verified figures, and the top three actions. |
+| **Ask a question** | Plain-language questions, with suggested ones. Each answer shows its type, the right chart, its assumptions and limits, and "how this was worked out" (the trace). |
+| **Savings plan** | Every action ranked by payback, with ₹, kWh, CO2e, cost, evidence and **Approve / Reject** buttons. |
+| **Where the energy goes** | Energy by asset and daily cost (tariff rise marked). For each asset: its average day against the level it should drop to outside the shift, a weekday × hour heatmap, and night load day by day (the leak's start is marked). |
+| **Data and checks** | The six validation checks, what cleaning changed, file upload, one-click **Apply the late data drop**, and the load history. |
+
+After new data loads, a banner says what moved. For the late drop: *"The bill rise moved from 15.44% to 15.03% (tariff −0.41 pts)"*, and line_2 reads 7.4% less after recalibration.
 
 ## Architecture
 
 ```mermaid
 flowchart TD
-    Q[Question: Streamlit UI or API client] --> A[FastAPI: validates the request]
-    A --> R[Orchestrator: route and plan]
-    R -- "not_in_data, clarification_needed, refused" --> C
-    R --> T[Tools: Python analytics]
-    T -- "next tool, max 4 calls" --> T
-    T --> V[Verification: parts add up, ranges ordered, evidence present]
-    V -- "fails: re-plan once" --> T
-    V --> C[Composer: template, optionally reworded by the LLM]
-    C --> N[Number check: every figure must match a tool result]
-    N --> ANS[Typed answer] --> UI[Dashboard]
-    T -.-> S[(CSV store and SQLite trace)]
-    N -.-> S
-    I[POST /ingest or loader CLI] --> P[Validate and clean] --> S
+    U[Streamlit dashboard] --> A[FastAPI: validates requests]
+    C[curl / judges] --> A
+    A --> R[Route: Claude Haiku 4.5 reads the question into intent + parameters; keyword guards and fallback]
+    R -- "not_in_data, refused, clarification_needed" --> W
+    R --> T[Tools: deterministic Python, max 6 calls]
+    T --> V[Verify: parts add up, ranges ordered, evidence and approval present]
+    V -- "fails: re-plan once from the stored data" --> T
+    V --> W[Write brief: template, reworded by the LLM]
+    W --> N[Number check: every figure must match a tool result, else the template is used]
+    N --> ANS[Typed answer + trace]
+    T --> D[(DuckDB: raw_* tables, clean_meter, ingest_log)]
+    N --> S[(SQLite: run traces, approvals)]
+    I[POST /ingest, loader CLI, /admin/load] --> P[Validate and clean] --> D
 ```
-
-The graph is in `src/energy/agent.py`. LLM use is confined to `src/energy/llm.py`.
 
 | Layer | Choice | Where |
 | --- | --- | --- |
-| UI | Streamlit | `ui/app.py` |
+| UI | Streamlit, light theme, Plotly | `ui/app.py`, `ui/charts.py`, `.streamlit/config.toml` |
 | API | FastAPI, Pydantic v2 | `src/energy/api.py` |
-| Orchestration | LangGraph | `src/energy/agent.py` |
+| Orchestration | LangGraph: route → tools → verify → write → number check | `src/energy/agent.py` |
 | Analytics | pandas, numpy | `src/energy/analytics.py` |
-| Validation and cleaning | pandas | `src/energy/pipeline.py` |
-| Store | CSV tables, SQLite trace | `src/energy/store.py` |
-| LLM | `LLM_PROVIDER=mock` by default; `anthropic` with `LLM_MODEL` (default `claude-opus-5-5`) | `src/energy/llm.py` |
-| Vector store | Not used; nothing here needs retrieval | |
+| Validation, cleaning, ingest | pandas | `src/energy/pipeline.py` |
+| Store | DuckDB (data in raw, clean and log layers), SQLite (traces, approvals) | `src/energy/store.py` |
+| LLM | Claude Haiku 4.5 on Amazon Bedrock (`LLM_PROVIDER=bedrock`); `anthropic` or `mock` also work | `src/energy/llm.py` |
+| Vector store | Not used: nothing here needs retrieval | |
 
-DuckDB and scikit-learn are pinned in `requirements.txt` but the current code does not import them.
-
-## Setup and run
-
-Requires Python 3.11.
-
-```bash
-py -3.11 -m venv .venv
-.venv\Scripts\python -m pip install -r requirements.txt
-set PYTHONPATH=src
-```
-
-Generate data, run the evaluation and the tests:
-
-```bash
-.venv\Scripts\python -m energy.generate --out data --seeds 1 2 3 --control --stress
-.venv\Scripts\python -m energy.evaluate --data data --out eval
-.venv\Scripts\python -m pytest -q
-```
-
-Load a dataset (prints the validation output) and start the API and UI:
-
-```bash
-.venv\Scripts\python -m energy.loader data\seed_1
-.venv\Scripts\python -m uvicorn energy.api:app --app-dir src --port 8000
-.venv\Scripts\python -m streamlit run ui/app.py
-```
-
-The UI is at http://localhost:8501 and the API docs at http://localhost:8000/docs.
-
-With Docker (untested, see Status):
-
-```bash
-docker compose up --build
-```
-
-On first start with an empty store the API container generates and loads one synthetic dataset. Set `SEED_DEMO_DATA=false` to disable that.
-
-### Configuration
-
-Copy `.env.example` to `.env`. `.env` is git-ignored; never commit a key.
-
-| Variable | Default | Meaning |
-| --- | --- | --- |
-| `LLM_PROVIDER` | `mock` | `mock` or `anthropic` |
-| `LLM_MODEL` | `claude-opus-5-5` | Model id for the provider |
-| `MOCK_LLM` | unset | `true` forces template briefs and keyword routing |
-| `STORE_DIR` | `store` | Loaded tables and `trace.db` |
-| `BASELINE_MODEL` | `ols` | `ols` or `ridge` |
-| `EMISSION_FACTOR` | `0.4` | kg CO2e per kWh, used only when the data card has none |
+**Why this shape.** Every number is computed by code. The LLM does two narrow jobs: reading a question into a structured request (JSON schema output), and rewording a brief built from tool results. Both are checked. Routing is guarded by deterministic rules for refusals and unsupported scenarios, and the number check rejects any figure no tool produced. There is one agent, not several: the steps after routing are deterministic, so extra agents would add cost and failure modes without adding capability.
 
 ## API
 
 | Endpoint | Purpose |
 | --- | --- |
-| `POST /analyze` | Body: `question`, optional `period` and `compare_to` (for example `2026-Q3`) |
-| `POST /ingest` | Multipart: a CSV `file` plus `table`, or `meta` JSON such as `{"table": "tariff"}` |
-| `GET /health` | API, data store and LLM status |
-| `GET /trace/{run_id}` | Steps, tools, inputs, outputs, LLM calls, tokens and latency for one answer |
-| `GET /validation` | The six validation checks and the cleaning report |
+| `POST /analyze` | `question`, optional `period` and `compare_to` (for example `2026-Q3`). Returns `run_id`, `answer_type`, `summary`, `bridge`, `recommendations`, `data`, `assumptions`, `limitations` |
+| `POST /ingest` | Multipart CSV `file` plus `table`, or `meta` JSON such as `{"table": "tariff"}`; optional `mode` `auto` or `replace`. Returns `rows_loaded`, `rows_rejected`, `status`, what was changed, and the validation output |
+| `GET /health` | API, data store (DuckDB) and LLM status; the LLM is pinged, with the result cached for 5 minutes |
+| `GET /trace/{run_id}` | Every step, tool, input and output, LLM calls, tokens, latency, model and data version |
+| `GET /validation` | Six checks, cleaning report and load history |
+| `GET /dashboard`, `GET /profile/{asset}` | Read-only data for the dashboard |
+| `POST /actions/{action_key}/decision` | Manager's decision on an action: `approved`, `rejected` or `pending` |
+| `POST /admin/load`, `/admin/late-drop`, `/admin/reset` | Load a server-side folder or the synthetic sample, apply its late drop, or clear the data |
 
 ```bash
-curl -s -X POST localhost:8000/analyze -H "Content-Type: application/json" -d "{\"question\": \"Why did the bill go up 15%?\"}"
-curl -s -X POST localhost:8000/analyze -H "Content-Type: application/json" -d "{\"question\": \"What should we do first?\", \"period\": \"2026-Q3\", \"compare_to\": \"2026-Q2\"}"
-curl -s -X POST localhost:8000/ingest -F "file=@data/seed_1/late_drop/tariff.csv" -F "meta={\"table\": \"tariff\"}"
+curl -s -X POST localhost:8000/analyze -H "Content-Type: application/json" -d '{"question": "Why did the bill go up 15%?"}'
+curl -s -X POST localhost:8000/analyze -H "Content-Type: application/json" -d '{"question": "What should we do first?", "period": "2026-Q3", "compare_to": "2026-Q2"}'
+curl -s -X POST localhost:8000/ingest -F "file=@data/seed_1/late_drop/tariff.csv" -F 'meta={"table": "tariff"}'
 curl -s localhost:8000/health
 curl -s localhost:8000/trace/en-xxxxxxxx
 ```
 
-Answer types: `decomposition`, `recommendation`, `calculated`, `not_in_data`, `clarification_needed`, `refused`. Every recommendation carries `action`, `rationale`, `evidence_refs`, `confidence`, `estimated_impact` and `requires_approval` (always true), plus savings and payback as ranges.
+**Safe ingest.** Data can be updated while the system is running, without losing or mixing it:
+
+- A tariff file replaces the schedule.
+- A file with the main meter plus several sub-meters, or one covering most of the period, replaces the table.
+- One meter's full series replaces that meter only (the late recalibration).
+- Anything shorter updates matching rows and adds new ones.
+
+The same file twice changes nothing. A meter with more than 5% missing intervals is flagged, and if the main meter is mostly missing, no cost figure is given.
 
 ## Method
 
-1. **Clean.** Remove duplicates, treat negative readings as meter resets, fill gaps of up to two hours by interpolation and longer ones from the typical profile for the same quarter, day type and time of day. Everything changed is counted in the cleaning report.
-2. **Price.** Each 15-minute interval is priced by its timestamp, so a mid-quarter tariff change is exact.
-3. **Tariff effect.** Current-quarter energy at actual prices minus the same energy at the reference quarter's prices.
-4. **Baseline.** A linear model of daily cost at reference prices on working-day and idle-day base load, units per product, and degree-days, fitted on the reference quarter.
-5. **Volume, mix, weather.** Each driver's effect is averaged over every ordering (Shapley), so the split does not depend on order. Working-day changes count as volume.
-6. **Waste.** The bill change minus the four effects above, so the parts always add up.
+1. **Clean.** Drop duplicates, treat negative readings as meter resets, fill gaps of up to 2 hours by interpolation and longer ones from the typical profile (same quarter, day type and time of day). Everything changed is counted.
+2. **Price.** Each 15-minute interval is priced by its timestamp, so the mid-quarter tariff change is exact.
+3. **Tariff effect.** Current energy at actual prices minus the same energy at reference-quarter prices.
+4. **Baseline.** A linear model of daily cost at reference prices, fitted on the reference quarter. Its inputs are working-day and idle-day base load, units of each product, and degree-days on working days.
+5. **Volume, mix, weather.** Each driver's effect is averaged over every ordering (Shapley), so the split does not depend on order.
+6. **New waste.** What the four effects above do not explain, so the parts always add up. When its range includes zero, the answer says no new waste can be confirmed and no machine is blamed.
 7. **Ranges.** The 5th to 95th percentile of 200 bootstrap refits of the baseline.
-8. **Leaks.** A sub-meter whose night load steps up and stays up for five days, compared within the same day type.
+8. **Waste with evidence.**
+   - *New waste:* a sub-meter whose night load steps up and stays up (the leak, from 20 July).
+   - *Off-hours waste:* load at night, or during shift hours on Sundays and holidays, above what that kind of asset needs (an assumed benchmark share of its shift load).
+9. **Savings.** Avoidable kW × the hours it runs per year × the tariff in that window, with low and high values, plus an assumed implementation cost. Payback is cost ÷ saving. Actions are ranked by payback, then ease.
 
 ## Evaluation
 
-`eval/report.md` is generated by `python -m energy.evaluate`. It covers the deterministic analytics only, on five generated datasets whose true split is known (three seeds, a no-leak control, and a stress set with a curved weather response).
+The analytics evaluation (`python -m energy.evaluate` → `eval/report.md`) runs five generated datasets with known truth: three seeds, a no-waste control, and a stress set with a curved weather response.
 
-| | OLS | Ridge |
+| | OLS (chosen) | Ridge |
 | --- | --- | --- |
-| Mean error per cause (points) | 0.09 | 0.15 |
-| Worst single error (points) | 0.34 | 0.52 |
-| Truth inside the stated range | 46 of 50 | 30 of 50 |
+| Mean error per cause (points) | 0.05 | 0.20 |
+| Worst single error (points) | 0.27 | 0.61 |
+| Truth inside the stated range | 42 of 50 | 24 of 50 |
+| Planted waste patterns found | 3 of 3 on every waste dataset | same |
+| False waste claims (control set included) | 0 | 0 |
+| True saving inside the stated range | 3 of 3 on every waste dataset | same |
 
-Read these with care: the generator and the baseline share the same linear form, so seeds 1 to 3 are an easy test. The stress set is the more honest figure (0.21 points mean error, truth outside 2 of 5 ranges). There is no evaluation report yet for the agent path (answer-type accuracy, faithfulness rate, latency, tokens); `tests/test_api.py` covers 12 question types in mock mode.
+The agent evaluation (`python -m energy.eval_agent --configs mock haiku sonnet` → `eval/agent_report.md`) runs 27 cases through the whole path:
+
+- 5 questions where price or mix, not machines, is the answer
+- 5 numeric questions checked against independent sums of the raw CSVs
+- 3 what-ifs
+- 4 waste and savings questions
+- 4 questions the data cannot answer
+- 3 attempts to make it invent a number
+- 1 clarification, 1 late-drop question and 1 wrong premise
+
+Checks are exact, in code; there is no LLM judge.
+
+| | Templates only | Claude Haiku 4.5 (chosen) | Claude Sonnet 4.6 |
+| --- | --- | --- | --- |
+| Cases passed | 27/27 | 27/27 | 27/27 |
+| Number faithfulness of final answers | 100% | 100% | 100% |
+| LLM figures caught by the number check | – | 0 | 8 |
+| Latency p50 / p95 | 4 / 7 ms | 2.0 / 3.9 s | 1.6 / 4.0 s |
+| LLM calls and tokens per request | 0 | 1.37, 2,216 | 1.37, 2,225 |
+
+Haiku is the default. It matched Sonnet's accuracy, and the number check never had to replace its wording; Sonnet added figures 8 times, which were caught and replaced by the template. The template-only mode passes the same set because the keyword router handles these phrasings; the LLM's value is in reading phrasings the keywords miss, and in a more readable brief.
+
+**Read with care.** The generator and the baseline were written by the same team, so the seed datasets are an easy test. The stress set is the more honest one (0.11 points mean error; weather is off by 0.27 points because its response is curved).
+
+## Data
+
+`python -m energy.generate` writes the four Annex B files plus a late-drop folder, a private `truth.json`, and a data card (`data_card.json` and `DATA_CARD.md`, Annex D). It is synthetic: a numpy generator with fixed seeds, and no real data. Traps planted on purpose:
+
+- a tariff rise mid-quarter, with a wrong off-peak price corrected by the late drop
+- line_2 reading 8% high until the late drop recalibrates it
+- a product-mix shift towards a more energy-intensive product
+- a hot period in September
+- a public holiday logged as a normal shift
+- unmetered load, two outages, random gaps, 200 duplicates and a meter reset
+- three controllable waste patterns: the compressed-air leak (new from 20 July), lights on at night, and HVAC on Sundays and holidays
 
 ## Assumptions
 
 - The tariff schedule in force during the reference quarter is the "old" price for every interval.
-- Peak hours are 06:00 to 22:00 when the tariff file has no `start_hour` and `end_hour` columns; the documented schema does not say.
-- A day is a working day only if units were produced and it is not a holiday.
-- Emission factor 0.4 kg CO2e per kWh unless the data card supplies one. This is our placeholder.
-- Repair cost of 20,000 to 60,000 for a leak. This is our placeholder; the data has no cost table, so payback figures should not be quoted as findings.
+- Peak hours come from the tariff's `start_hour`/`end_hour` columns (extra columns are allowed by Annex B); without them, peak is 06:00–22:00.
+- The shift is 06:00–22:00 (`SHIFT_HOURS`). A day is a working day only if units were produced and it is not a holiday.
+- Emission factor: 0.71 kg CO2e per kWh, read from the data card (an assumed grid average).
+- Implementation costs and the expected off-hours load of each kind of asset are stated rules of thumb (`ACTION_LIBRARY` and `OFF_HOURS_BENCHMARK` in `analytics.py`). The data has no cost table.
 
 ## Limitations
 
-- Ranges cover fit error only, not a wrong model form.
-- The baseline is linear; a curved weather response is misattributed (see the stress set).
-- Intraday load shape is the same in both quarters of our data, so load shifting between peak and off-peak is untested.
-- Only one waste pattern is detected: a sustained rise in night load.
-- "Idle" means days with no production; idle hours inside working days are not counted.
-- In mock mode, a question phrased outside the keyword lists returns `clarification_needed`.
-- The store is a set of CSV files and one process; it is not built for concurrent writers.
+- Ranges cover fit error only, not a wrong model form. A curved weather response is partly misattributed (see the stress set).
+- Intraday load shape is the same in both quarters, so shifting load to off-peak hours is not modelled.
+- Scenarios for a different production volume are not modelled. The tool says so instead of guessing.
+- The factory clock is taken as UTC.
+- DuckDB allows one writer, so the loader goes through the running API when it is up.
 
-## Known edge cases handled
+## Tests
 
-| Case | Behaviour |
-| --- | --- |
-| Sub-meters do not add up to main | Reported as an unmetered remainder, never as waste |
-| Missing intervals, duplicates, a meter reset | Counted, re-estimated and reported |
-| Tariff change mid-quarter | Priced per interval |
-| Product-mix shift | Lands in mix through per-product coefficients |
-| Hot period | Lands in weather through degree-days |
-| Holiday logged as a normal shift | Flagged by validation and treated as non-working |
-| Late corrected tariff or meter file | Ingest replaces the affected rows; results are recomputed |
-| Same file ingested twice | No duplicate rows |
-| Unreadable file or missing columns | `status: rejected` with the reason; the API keeps running |
-| Period not in the data, or fewer than 30 days in a quarter | `not_in_data` |
-| LLM wording contains a figure no tool produced | Wording discarded, template used, noted in `limitations` |
+`python -m pytest -q`: 49 tests covering the schema, cleaning, validation, the bill split against truth, waste and savings against truth, the control set, ranking, safe ingest, the API contract and 20 answer types, premise correction, the what-ifs, the number check, LLM fallback, the dashboard, approvals and the late drop.
 
-## Repository layout
-
-```
-src/energy/   generate, pipeline, analytics, evaluate, store, agent, llm, api, loader, bootstrap
-ui/app.py     Streamlit front end
-tests/        test_core.py, test_api.py
-eval/         report.md, results.json
-PLAN.md       plan, checks, design changes, remaining work
-```
-
-`data/` and `store/` are git-ignored; regenerate data with the command above.
+Sample traces for four answer types are in `eval/traces/`.
 
 ## AI-usage disclosure
 
-The code, tests, README and plan in this repository were written with Claude Code (Anthropic), working from the participant guide and the team's design document. Verification so far: the test suite, the evaluation against known-truth data, a live API run, and a browser check of the UI. Team members must read and be able to explain every module before submission.
+The code, tests and documentation were written with Claude Code (Anthropic), working from the participant guide and the team's design document. They were verified with the test suite, the two evaluations against known truth, live API runs with Claude on Bedrock, and screenshots of the running dashboard. Team members must read and be able to explain every module before submission.
 
 ## Team contribution
 
 | Member | Area |
 | --- | --- |
-| [Name 1] | Analytics core |
-| [Name 2] | API and agent |
-| [Name 3] | Data, validation, evaluation data |
-| [Name 4] | Interface and delivery |
+| [Name 1] | Analytics core: baseline, bridge, waste, savings |
+| [Name 2] | API, agent and LLM layer |
+| [Name 3] | Data generator, validation, evaluation |
+| [Name 4] | Dashboard and delivery |
